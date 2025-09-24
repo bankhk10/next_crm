@@ -12,7 +12,7 @@ export default function Home() {
         justifyContent: "center",
         px: { xs: 2, md: 4 },
         py: { xs: 6, md: 10 },
-        backgroundColor: "#f3f4f6",
+        backgroundColor: "#e0e0e0",
         position: "relative",
         overflow: "hidden",
       }}
