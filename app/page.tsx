@@ -1,5 +1,4 @@
 import { Box, Container, Paper } from "@mui/material";
-
 import LoginForm from "@/components/auth/LoginForm";
 
 export default function Home() {
@@ -16,31 +15,68 @@ export default function Home() {
         backgroundColor: "#f3f4f6",
         position: "relative",
         overflow: "hidden",
-        "&::before": {
-          content: '""',
-          position: "absolute",
-          width: { xs: "480px", md: "720px" },
-          height: { xs: "480px", md: "720px" },
-          background: "radial-gradient(circle at top left, #d32f2f, #b71c1c)",
-          borderRadius: "50%",
-          top: { xs: "-320px", md: "-420px" },
-          left: { xs: "-260px", md: "-280px" },
-          transform: "rotate(-12deg)",
-          opacity: 0.85,
-        },
-        "&::after": {
-          content: '""',
-          position: "absolute",
-          width: { xs: "360px", md: "520px" },
-          height: { xs: "360px", md: "520px" },
-          background: "radial-gradient(circle at bottom right, #e5e7eb, #d1d5db)",
-          borderRadius: "50%",
-          bottom: { xs: "-240px", md: "-320px" },
-          right: { xs: "-200px", md: "-240px" },
-          transform: "rotate(18deg)",
-        },
       }}
     >
+      {/* SVG background ขวาบน */}
+      <Box
+        component="svg"
+        xmlns="http://www.w3.org/2000/svg"
+        viewBox="0 0 800 600"
+        preserveAspectRatio="none"
+        sx={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+          width: "100%",
+          height: "100%",
+          zIndex: 0,
+        }}
+      >
+        <path
+          d="M250,0 C300,100 600,100 700,200 C800,300 450,500 800,600 L800,0 Z"
+          fill="#b92626"
+        />
+      </Box>
+
+      {/* วงกลมซ้อนกัน ล่างซ้าย */}
+      <Box
+        sx={{
+          position: "absolute",
+          bottom: { xs: "-120px", md: "-180px" },
+          left: { xs: "-120px", md: "-180px" },
+          width: { xs: 300, md: 500 },
+          height: { xs: 300, md: 500 },
+          borderRadius: "50%",
+          backgroundColor: "#b92626",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          zIndex: 0,
+        }}
+      >
+        <Box
+          sx={{
+            width: { xs: 220, md: 400 },
+            height: { xs: 220, md: 400 },
+            borderRadius: "50%",
+            backgroundColor: "#fff",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Box
+            sx={{
+              width: { xs: 160, md: 300 },
+              height: { xs: 160, md: 300 },
+              borderRadius: "50%",
+              backgroundColor: "#9ca3af", // เทา
+            }}
+          />
+        </Box>
+      </Box>
+
+      {/* เนื้อหา login */}
       <Container maxWidth="sm" sx={{ position: "relative", zIndex: 1 }}>
         <Paper
           elevation={12}

@@ -2,6 +2,7 @@
 
 import { useActionState } from "react";
 import Image from "next/image";
+import { Prompt } from "next/font/google";
 import {
   Alert,
   Box,
@@ -16,51 +17,87 @@ import {
 
 import { login, type LoginState } from "@/app/actions/auth";
 
+// โหลดฟอนต์ Prompt
+const prompt = Prompt({
+  weight: ["400", "500", "700"], // เลือกน้ำหนักฟอนต์
+  subsets: ["thai", "latin"], // ให้รองรับภาษาไทย
+});
+
 const initialState: LoginState = {};
 
 export default function LoginForm() {
   const [state, formAction, isPending] = useActionState(login, initialState);
 
   return (
-    <Box component="form" action={formAction} noValidate>
-      <Stack spacing={3}>
+    <Box
+      component="form"
+      action={formAction}
+      noValidate
+      sx={{ fontFamily: prompt.style.fontFamily }}
+    >
+      <Stack spacing={2}>
         <Stack spacing={2} alignItems="center" textAlign="center">
           <Box
             sx={{
-              width: { xs: 96, md: 112 },
-              height: { xs: 96, md: 112 },
+              width: { xs: 140, md: 180 },
+              height: { xs: 140, md: 180 },
               position: "relative",
+              borderRadius: "8%",
+              overflow: "hidden",
+              boxShadow: "0 8px 20px rgba(0,0,0,0.25)",
             }}
           >
             <Image
-              src="/cs-one-logo.svg"
-              alt="ตราช้างใหญ่ CS ONE"
+              src="/images/logo.jpg"
+              alt="CS ONE"
               fill
-              sizes="(max-width: 600px) 96px, 112px"
+              sizes="(max-width: 800px) 140px, 180px"
               style={{ objectFit: "contain" }}
             />
           </Box>
+
           <Box>
             <Typography
               component="p"
-              variant="h5"
-              fontWeight={700}
-              sx={{ textTransform: "uppercase", letterSpacing: 1.4 }}
+              variant="h4"
+              fontWeight={800}
+              sx={{
+                textTransform: "uppercase",
+                letterSpacing: 2.4,
+                fontFamily: prompt.style.fontFamily, // 👈 บังคับใช้ Prompt
+              }}
             >
-              ระบบ <Box component="span" color="#c62828">CS ONE</Box>
+              ระบบ{" "}
+              <Box
+                component="span"
+                color="#c62828"
+                sx={{ fontFamily: prompt.style.fontFamily }}
+              >
+                CS ONE
+              </Box>
             </Typography>
-            <Typography variant="subtitle1" color="text.secondary">
+            <Typography
+              variant="h5"
+              fontWeight={600}
+              sx={{ position: "relative", top: 8 }}
+            >
               Smart Crop Smart Solutions
             </Typography>
           </Box>
         </Stack>
 
         <Stack spacing={1} textAlign="center">
-          <Typography component="h2" variant="h5" fontWeight={700}>
+          <Typography
+            variant="h5"
+            fontWeight={600}
+            sx={{
+              letterSpacing: 1.5,
+              fontFamily: prompt.style.fontFamily,
+              position: "relative",
+              top: 12,
+            }}
+          >
             เข้าสู่ระบบ
-          </Typography>
-          <Typography color="text.secondary" variant="body2">
-            ยินดีต้อนรับกลับ กรุณากรอกข้อมูลเพื่อดำเนินการต่อ
           </Typography>
         </Stack>
 
@@ -70,31 +107,61 @@ export default function LoginForm() {
           autoComplete="email"
           autoFocus
           fullWidth
-          label="อีเมล"
+          label="USERNAME"
           name="email"
           placeholder="name@example.com"
           required
           type="email"
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "20px",
+              height: 50, // 👈 กำหนดความสูงเอง (เช่น 44px)
+              "& input": {
+                paddingLeft: "14px", // ดันข้อความไปทางขวา
+                paddingY: "10px", // ปรับความสูงด้านใน
+              },
+            },
+             top: 12,
+          }}
         />
 
         <TextField
           autoComplete="current-password"
           fullWidth
-          label="รหัสผ่าน"
+          label="PASSWORD"
           name="password"
           placeholder="••••••••"
           required
           type="password"
+          sx={{
+            "& .MuiOutlinedInput-root": {
+              borderRadius: "20px",
+              height: 50, // 👈 เท่ากับ USERNAME
+              "& input": {
+                paddingLeft: "14px",
+                paddingY: "10px",
+              },
+            },
+             top: 12,
+          }}
         />
 
-        <Stack direction={{ xs: "column", sm: "row" }} spacing={1.5} alignItems={{ xs: "flex-start", sm: "center" }} justifyContent="space-between">
+        <Stack
+          direction={{ xs: "column", sm: "row" }}
+          spacing={1.5}
+          alignItems={{ xs: "flex-start", sm: "center" }}
+          justifyContent="space-between"
+        >
           <FormControlLabel
-            control={<Checkbox name="remember" color="primary" sx={{ borderRadius: 1 }} />}
-            label="จดจำฉัน"
+            control={
+              <Checkbox
+                name="remember"
+                color="primary"
+                sx={{ borderRadius: 1 }}
+              />
+            }
+            label="บันทึกรหัส"
           />
-          <Link href="#" underline="hover" variant="body2" color="#c62828">
-            ลืมรหัสผ่าน?
-          </Link>
         </Stack>
 
         <Button
@@ -106,13 +173,17 @@ export default function LoginForm() {
             textTransform: "none",
             fontWeight: 700,
             borderRadius: 999,
-            py: 1.5,
-            background: "linear-gradient(90deg, #c62828 0%, #ef5350 100%)",
-            boxShadow: "0 18px 30px rgba(198,40,40,0.25)",
+            py: 1.2,
+            px: 4,
+            width: "40%",
+            alignSelf: "center",
+            backgroundColor: "#757575", // 👈 สีเทา MUI grey[500]
+            boxShadow: "0 8px 16px rgba(0,0,0,0.15)",
             "&:hover": {
-              background: "linear-gradient(90deg, #b71c1c 0%, #e53935 100%)",
-              boxShadow: "0 16px 28px rgba(183,28,28,0.3)",
+              backgroundColor: "#424242", // 👈 สีเทาเข้มกว่าเมื่อ hover
+              boxShadow: "0 10px 18px rgba(0,0,0,0.2)",
             },
+            fontFamily: prompt.style.fontFamily,
           }}
         >
           {isPending ? "กำลังตรวจสอบ..." : "เข้าสู่ระบบ"}
