@@ -7,9 +7,6 @@ import { redirect } from "next/navigation";
 
 export type LoginState = {
   error?: string;
-  values?: {
-    email?: string; // ✅ เพิ่ม field เก็บค่า email
-  };
 };
 
 const INVALID_MESSAGE = "อีเมลหรือรหัสผ่านไม่ถูกต้อง";
@@ -20,10 +17,7 @@ export async function login(_: LoginState, formData: FormData): Promise<LoginSta
   const persistent = formData.get("remember") === "on";
 
   if (!email || !password) {
-    return {
-      error: "กรุณากรอกอีเมลและรหัสผ่าน",
-      values: { email }, // ✅ เก็บค่าอีเมลกลับ
-    };
+    return { error: "กรุณากรอกอีเมลและรหัสผ่าน" };
   }
 
   const user = await prisma.user.findUnique({
@@ -31,19 +25,13 @@ export async function login(_: LoginState, formData: FormData): Promise<LoginSta
   });
 
   if (!user) {
-    return {
-      error: INVALID_MESSAGE,
-      values: { email }, // ✅ คงค่าอีเมล
-    };
+    return { error: INVALID_MESSAGE };
   }
 
   const passwordValid = await compare(password, user.passwordHash);
 
   if (!passwordValid) {
-    return {
-      error: INVALID_MESSAGE,
-      values: { email }, // ✅ คงค่าอีเมล
-    };
+    return { error: INVALID_MESSAGE };
   }
 
   await startUserSession(user.id, { persistent });
