@@ -65,15 +65,15 @@ export default function Header({ user, onMenuClick }: HeaderProps) {
 
         <Stack direction="row" spacing={1.5} alignItems="center">
           <IconButton size="small" sx={ACTION_ICON_STYLE}>
-            <NotificationsNoneOutlinedIcon fontSize="small" />
+            <NotificationsNoneOutlinedIcon fontSize="medium" />
           </IconButton>
 
           <IconButton size="small" sx={ACTION_ICON_STYLE}>
-            <LanguageOutlinedIcon fontSize="small" />
+            <LanguageOutlinedIcon  />
           </IconButton>
 
           <IconButton size="small" sx={ACTION_ICON_STYLE} onClick={logout}>
-            <LogoutOutlinedIcon />
+            <LogoutOutlinedIcon fontSize="medium"/>
           </IconButton>
 
           <Divider orientation="vertical" flexItem sx={{ borderColor: "rgba(255,255,255,0.4)" }} />

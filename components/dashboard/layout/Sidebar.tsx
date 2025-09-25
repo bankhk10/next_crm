@@ -16,18 +16,19 @@ import {
   Stack,
 } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
-import AssessmentOutlinedIcon from "@mui/icons-material/AssessmentOutlined";
-import EventNoteOutlinedIcon from "@mui/icons-material/EventNoteOutlined";
-import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
-import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
-import Inventory2OutlinedIcon from "@mui/icons-material/Inventory2Outlined";
-import PointOfSaleOutlinedIcon from "@mui/icons-material/PointOfSaleOutlined";
-import CampaignOutlinedIcon from "@mui/icons-material/CampaignOutlined";
-import PeopleOutlineOutlinedIcon from "@mui/icons-material/PeopleOutlineOutlined";
-import Diversity3OutlinedIcon from "@mui/icons-material/Diversity3Outlined";
 import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import AssessmentIcon from '@mui/icons-material/Assessment';
+import AssignmentIndIcon from "@mui/icons-material/AssignmentInd";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import LocationOnIcon from '@mui/icons-material/LocationOn';
+import Inventory2Icon from "@mui/icons-material/Inventory2";
+import MonetizationOnIcon from '@mui/icons-material/MonetizationOn';
+import CampaignIcon from '@mui/icons-material/Campaign';
+import PersonIcon from '@mui/icons-material/Person';
+import Diversity3Icon from '@mui/icons-material/Diversity3';
+
 
 import LinkBehavior from "@/components/LinkBehavior"; // ✅ import ที่สร้างไว้
 
@@ -52,7 +53,7 @@ const navItems: NavItem[] = [
   {
     href: "/dashboard",
     label: "รายงาน",
-    icon: <AssessmentOutlinedIcon fontSize="medium" />,
+    icon: <AssessmentIcon fontSize="small" />,
     children: [
       { href: "/dashboard/reports/overview", label: "รายงานภาพรวม" },
       { href: "/dashboard/reports/sales", label: "รายงานการขาย" },
@@ -63,27 +64,27 @@ const navItems: NavItem[] = [
   {
     href: "/dashboard/activities",
     label: "กิจกรรม",
-    icon: <EventNoteOutlinedIcon fontSize="small" />,
+    icon: <AssignmentIndIcon fontSize="small" />,
   },
   {
     href: "/dashboard/calendar",
     label: "ปฏิทิน",
-    icon: <CalendarMonthOutlinedIcon fontSize="small" />,
+    icon: <CalendarMonthIcon fontSize="small" />,
   },
   {
     href: "/dashboard/map",
     label: "แผนที่",
-    icon: <MapOutlinedIcon fontSize="small" />,
+    icon: <LocationOnIcon fontSize="small" />,
   },
   {
     href: "/dashboard/products",
     label: "สินค้า",
-    icon: <Inventory2OutlinedIcon fontSize="small" />,
+    icon: <Inventory2Icon fontSize="small" />,
   },
   {
     href: "/dashboard/sales",
     label: "การขาย",
-    icon: <PointOfSaleOutlinedIcon fontSize="small" />,
+    icon: <MonetizationOnIcon fontSize="small" />,
     children: [
       { href: "/dashboard/sales/orders", label: "รายการขาย" },
       { href: "/dashboard/sales/quotations", label: "ใบเสนอราคา" },
@@ -92,17 +93,17 @@ const navItems: NavItem[] = [
   {
     href: "/dashboard/marketing",
     label: "การตลาด",
-    icon: <CampaignOutlinedIcon fontSize="small" />,
+    icon: <CampaignIcon fontSize="small" />,
   },
   {
-    href: "/dashboard/customers/list",
+    href: "/dashboard/customers",
     label: "ลูกค้า",
-    icon: <PeopleOutlineOutlinedIcon fontSize="small" />,
+    icon: <PersonIcon fontSize="small" />,
   },
   {
-    href: "/dashboard/employee",
+    href: "/dashboard/employees",
     label: "พนักงาน",
-    icon: <Diversity3OutlinedIcon fontSize="small" />,
+    icon: <Diversity3Icon fontSize="small" />,
   },
   {
     href: "/dashboard/roles",
@@ -145,7 +146,7 @@ function NavLink({
             "&:hover": { bgcolor: HOVER_BACKGROUND },
           }}
         >
-          <ListItemIcon sx={{ color: "inherit", minWidth: 32 }}>
+          <ListItemIcon sx={{ color: "inherit", minWidth: 36 }}>
             {item.icon}
           </ListItemIcon>
           <ListItemText primary={item.label} />
