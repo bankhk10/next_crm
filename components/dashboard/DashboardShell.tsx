@@ -2,10 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ReactNode, useMemo, useState, useTransition } from "react";
+import { ReactNode, useMemo, useState } from "react";
 
 import {
-  Button,
   Avatar,
   Box,
   Collapse,
@@ -32,10 +31,8 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 
 import type { SessionUser } from "@/lib/auth";
-import { logout } from "@/app/actions/auth";
 
 type NavItem = {
   label: string;
@@ -62,14 +59,46 @@ const NAV_ITEMS: NavItem[] = [
     icon: <AssessmentOutlinedIcon fontSize="small" />,
     children: REPORTS_CHILDREN,
   },
-  { label: "กิจกรรม", icon: <EventNoteOutlinedIcon fontSize="small" />, href: "/dashboard/activities" },
-  { label: "ปฏิทิน", icon: <CalendarMonthOutlinedIcon fontSize="small" />, href: "/dashboard/calendar" },
-  { label: "แผนที่", icon: <MapOutlinedIcon fontSize="small" />, href: "/dashboard/map" },
-  { label: "สินค้า", icon: <Inventory2OutlinedIcon fontSize="small" />, href: "/dashboard/products" },
-  { label: "การขาย", icon: <PointOfSaleOutlinedIcon fontSize="small" />, href: "/dashboard/sales" },
-  { label: "การตลาด", icon: <CampaignOutlinedIcon fontSize="small" />, href: "/dashboard/marketing" },
-  { label: "ลูกค้า", icon: <PeopleOutlineOutlinedIcon fontSize="small" />, href: "/dashboard/customers" },
-  { label: "พนักงาน", icon: <Diversity3OutlinedIcon fontSize="small" />, href: "/dashboard/employees" },
+  {
+    label: "กิจกรรม",
+    icon: <EventNoteOutlinedIcon fontSize="small" />,
+    href: "/dashboard/activities",
+  },
+  {
+    label: "ปฏิทิน",
+    icon: <CalendarMonthOutlinedIcon fontSize="small" />,
+    href: "/dashboard/calendar",
+  },
+  {
+    label: "แผนที่",
+    icon: <MapOutlinedIcon fontSize="small" />,
+    href: "/dashboard/map",
+  },
+  {
+    label: "สินค้า",
+    icon: <Inventory2OutlinedIcon fontSize="small" />,
+    href: "/dashboard/products",
+  },
+  {
+    label: "การขาย",
+    icon: <PointOfSaleOutlinedIcon fontSize="small" />,
+    href: "/dashboard/sales",
+  },
+  {
+    label: "การตลาด",
+    icon: <CampaignOutlinedIcon fontSize="small" />,
+    href: "/dashboard/marketing",
+  },
+  {
+    label: "ลูกค้า",
+    icon: <PeopleOutlineOutlinedIcon fontSize="small" />,
+    href: "/dashboard/customers",
+  },
+  {
+    label: "พนักงาน",
+    icon: <Diversity3OutlinedIcon fontSize="small" />,
+    href: "/dashboard/employees",
+  },
 ];
 
 function NavLink({ item, depth = 0 }: { item: NavItem; depth?: number }) {
@@ -80,7 +109,9 @@ function NavLink({ item, depth = 0 }: { item: NavItem; depth?: number }) {
     }
 
     if (item.children?.length) {
-      return item.children.some((child) => pathname.startsWith(child.href ?? ""));
+      return item.children.some((child) =>
+        pathname.startsWith(child.href ?? "")
+      );
     }
 
     return false;
@@ -113,12 +144,21 @@ function NavLink({ item, depth = 0 }: { item: NavItem; depth?: number }) {
     return (
       <Box>
         <ListItemButton onClick={handleToggle} sx={baseStyles}>
-          <ListItemIcon sx={{ minWidth: 0, color: "inherit" }}>{item.icon}</ListItemIcon>
+          <ListItemIcon sx={{ minWidth: 0, color: "inherit" }}>
+            {item.icon}
+          </ListItemIcon>
           <ListItemText
             primary={item.label}
-            primaryTypographyProps={{ fontWeight: isActive ? 600 : 500, fontSize: 14 }}
+            primaryTypographyProps={{
+              fontWeight: isActive ? 600 : 500,
+              fontSize: 14,
+            }}
           />
-          {open ? <ExpandLessIcon fontSize="small" /> : <ExpandMoreIcon fontSize="small" />}
+          {open ? (
+            <ExpandLessIcon fontSize="small" />
+          ) : (
+            <ExpandMoreIcon fontSize="small" />
+          )}
         </ListItemButton>
         <Collapse in={open} timeout="auto" unmountOnExit>
           <List component="div" disablePadding sx={{ pl: 1.5 }}>
@@ -140,17 +180,31 @@ function NavLink({ item, depth = 0 }: { item: NavItem; depth?: number }) {
       sx={baseStyles}
       selected={isActive}
     >
-      <ListItemIcon sx={{ minWidth: 0, color: "inherit" }}>{item.icon}</ListItemIcon>
-      <ListItemText primary={item.label} primaryTypographyProps={{ fontSize: 14 }} />
+      <ListItemIcon sx={{ minWidth: 0, color: "inherit" }}>
+        {item.icon}
+      </ListItemIcon>
+      <ListItemText
+        primary={item.label}
+        primaryTypographyProps={{ fontSize: 14 }}
+      />
     </ListItemButton>
   );
 }
 
-export default function DashboardShell({ children, user }: DashboardShellProps) {
-  const [isLoggingOut, startLogout] = useTransition();
-
+export default function DashboardShell({
+  children,
+  user,
+}: DashboardShellProps) {
   return (
-    <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#f1f3f6" }}>
+    <Box
+      sx={{
+        display: "flex",
+        height: "100vh",
+        bgcolor: "#f1f3f6",
+        overflow: "hidden",
+      }}
+    >
+      {/* Sidebar */}
       <Box
         component="nav"
         sx={{
@@ -162,6 +216,8 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
           py: 3,
           px: 2,
           gap: 3,
+          flexShrink: 0, // ✅ ไม่หด
+          overflowY: "auto", // ถ้าเมนูยาวเองก็เลื่อนได้
         }}
       >
         <Stack direction="row" alignItems="center" spacing={1.5} sx={{ px: 1 }}>
@@ -200,7 +256,16 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
         </List>
       </Box>
 
-      <Box sx={{ flex: 1, display: "flex", flexDirection: "column" }}>
+      {/* Content */}
+      <Box
+        sx={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden",
+        }}
+      >
+        {/* Header */}
         <Box
           component="header"
           sx={{
@@ -212,6 +277,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
             gap: 1,
             px: { xs: 2, md: 4 },
             py: 2,
+            flexShrink: 0, // ✅ header ไม่เลื่อน
           }}
         >
           <Stack direction="row" spacing={1} alignItems="center">
@@ -224,7 +290,11 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
             <IconButton size="small" sx={{ color: "inherit" }}>
               <HelpOutlineOutlinedIcon fontSize="small" />
             </IconButton>
-            <Divider orientation="vertical" flexItem sx={{ borderColor: "rgba(255,255,255,0.4)" }} />
+            <Divider
+              orientation="vertical"
+              flexItem
+              sx={{ borderColor: "rgba(255,255,255,0.4)" }}
+            />
             <Stack direction="row" spacing={1.5} alignItems="center">
               <Box textAlign="right">
                 <Typography variant="body2" fontWeight={600}>
@@ -234,38 +304,29 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
                   Admin
                 </Typography>
               </Box>
-              <Avatar sx={{ bgcolor: "rgba(255,255,255,0.2)", width: 36, height: 36 }}>
+              <Avatar
+                sx={{ bgcolor: "rgba(255,255,255,0.2)", width: 36, height: 36 }}
+              >
                 {user.name?.[0]?.toUpperCase() ?? user.email[0].toUpperCase()}
               </Avatar>
-              <Button
-                variant="outlined"
-                color="inherit"
-                size="small"
-                onClick={() => startLogout(() => logout())}
-                disabled={isLoggingOut}
-                startIcon={<LogoutOutlinedIcon fontSize="small" />}
-                sx={{
-                  color: "common.white",
-                  borderColor: "rgba(255,255,255,0.6)",
-                  fontWeight: 600,
-                  "&:hover": {
-                    borderColor: "common.white",
-                    bgcolor: "rgba(255,255,255,0.12)",
-                  },
-                }}
-              >
-                ออกจากระบบ
-              </Button>
             </Stack>
           </Stack>
         </Box>
 
-        <Box component="main" sx={{ flex: 1, p: { xs: 2, md: 4 } }}>
+        {/* Main scrollable */}
+        <Box
+          component="main"
+          sx={{
+            flex: 1,
+            overflow: "auto", // ✅ เลื่อนเฉพาะ main content
+            p: { xs: 2, md: 4 },
+          }}
+        >
           <Box
             sx={{
               bgcolor: "common.white",
               borderRadius: 3,
-              minHeight: "calc(100vh - 160px)",
+              minHeight: "100%",
               boxShadow: "0 8px 24px rgba(0,0,0,0.08)",
               p: { xs: 2.5, md: 4 },
             }}
