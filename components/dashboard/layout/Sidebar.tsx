@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Fragment, ReactNode, useEffect, useMemo, useState } from "react";
+import { Fragment, ReactNode, useEffect, useState } from "react";
 import Image from "next/image";
 import {
   Box,
@@ -30,8 +30,6 @@ import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
-import { useAuth } from "@/context/AuthContext";
-
 type NavChild = {
   href: string;
   label: string;
@@ -44,16 +42,10 @@ type NavItem = {
   children?: NavChild[];
 };
 
-type MenuRestrictions = Readonly<Record<string, readonly string[]>>;
-
 const BRAND_COLOR = "#b92626";
 const ACTIVE_BACKGROUND = "rgba(255,255,255,0.15)";
 const HOVER_BACKGROUND = "rgba(255,255,255,0.1)";
 const CHILD_TEXT_COLOR = "rgba(255,255,255,0.7)";
-
-function getRestrictions(source: MenuRestrictions, key: string) {
-  return source[key] ?? [];
-}
 
 const navItems: NavItem[] = [
   {
@@ -61,10 +53,10 @@ const navItems: NavItem[] = [
     label: "รายงาน",
     icon: <AssessmentOutlinedIcon fontSize="small" />,
     children: [
-      { href: "/dashboard", label: "รายงานภาพรวม" },
-      { href: "/dashboard/sales-report", label: "รายงานการขาย" },
-      { href: "/dashboard/marketing-report", label: "รายงานการตลาด" },
-      { href: "/dashboard/activity-report", label: "รายงานกิจกรรม" },
+      { href: "/dashboard/reports/overview", label: "รายงานภาพรวม" },
+      { href: "/dashboard/reports/sales", label: "รายงานการขาย" },
+      { href: "/dashboard/reports/marketing", label: "รายงานการตลาด" },
+      { href: "/dashboard/reports/activity", label: "รายงานกิจกรรม" },
     ],
   },
   {
@@ -118,21 +110,6 @@ const navItems: NavItem[] = [
   },
 ];
 
-const roleMenuRestrictions: MenuRestrictions = {
-  MARKETING_MANAGER: ["/dashboard/sales"],
-  MARKETING_HEAD: ["/dashboard", "/dashboard/sales"],
-  MARKETING_EMPLOYEE: ["/dashboard", "/dashboard/sales"],
-  SALES_MANAGER: ["/dashboard/marketing"],
-  SALES_HEAD: ["/dashboard", "/dashboard/marketing"],
-  SALES_EMPLOYEE: ["/dashboard", "/dashboard/marketing"],
-};
-
-const typeMenuRestrictions: MenuRestrictions = {
-  User: ["/dashboard/employee", "/dashboard/roles"],
-  GM: ["/dashboard/roles"],
-  Admin: [],
-};
-
 type NavLinkProps = {
   item: NavItem;
   depth?: number;
@@ -150,8 +127,10 @@ function NavLink({
   onLinkClick,
   pathname,
 }: NavLinkProps) {
-  const isActive =
-    pathname === item.href || pathname.startsWith(`${item.href}/`);
+  // ถ้ามี children ให้ active เมื่อ pathname ตรงกับ child
+  const isActive = item.children
+    ? item.children.some((child) => pathname.startsWith(child.href))
+    : pathname === item.href;
 
   if (item.children?.length) {
     return (
@@ -171,35 +150,59 @@ function NavLink({
           <ListItemText primary={item.label} />
           {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </ListItemButton>
-        <Collapse in={isOpen} timeout="auto" unmountOnExit>
-          <List component="div" disablePadding>
-            {item.children.map((child) => {
-              const childIsActive = pathname === child.href;
-              return (
-                <Link key={child.href} href={child.href} onClick={onLinkClick}>
-                  <ListItemButton
-                    sx={{
-                      pl: 6,
-                      fontSize: 14,
-                      borderRadius: 2,
-                      color: childIsActive ? "white" : CHILD_TEXT_COLOR,
-                      bgcolor: childIsActive
-                        ? ACTIVE_BACKGROUND
-                        : "transparent",
-                      "&:hover": { bgcolor: HOVER_BACKGROUND },
-                    }}
-                  >
-                    <ListItemText primary={child.label} />
-                  </ListItemButton>
-                </Link>
-              );
-            })}
-          </List>
-        </Collapse>
+      <Collapse in={isOpen} timeout="auto" unmountOnExit>
+  <Box
+    sx={{
+      bgcolor: "rgba(255,255,255,0.05)", // พื้นหลังใส ๆ
+      borderRadius: 2,                   // มุมโค้ง
+      mx: 1,                             // margin ซ้าย/ขวา
+      my: 0.5,                           // margin บน/ล่าง
+      p: 0.5,                            // padding ข้างใน
+    }}
+  >
+    <List component="div" disablePadding>
+      {item.children.map((child) => {
+        const childIsActive = pathname === child.href;
+        return (
+          <Link key={child.href} href={child.href} onClick={onLinkClick}>
+            <ListItemButton
+              sx={{
+                pl: 4,
+                fontSize: 14,
+                borderRadius: 2,
+                color: childIsActive ? "white" : CHILD_TEXT_COLOR,
+                bgcolor: childIsActive
+                  ? ACTIVE_BACKGROUND
+                  : "transparent",
+                "&:hover": { bgcolor: HOVER_BACKGROUND },
+              }}
+            >
+              <ListItemText primary={child.label} />
+              {childIsActive && (
+                <Box
+                  component="span"
+                  sx={{
+                    width: 8,
+                    height: 8,
+                    bgcolor: "white",
+                    borderRadius: "50%",
+                    ml: 1.5,
+                  }}
+                />
+              )}
+            </ListItemButton>
+          </Link>
+        );
+      })}
+    </List>
+  </Box>
+</Collapse>
+
       </Fragment>
     );
   }
 
+  // เมนูไม่มี children
   return (
     <Link href={item.href} onClick={onLinkClick}>
       <ListItemButton
@@ -220,6 +223,7 @@ function NavLink({
   );
 }
 
+
 type SidebarProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -228,23 +232,6 @@ type SidebarProps = {
 export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
-  const { user } = useAuth();
-
-  const filteredNavItems = useMemo(() => {
-    const roleName = user?.role?.name ?? "";
-    const userType = user?.type ?? "";
-    const restrictedByRole = new Set(
-      getRestrictions(roleMenuRestrictions, roleName)
-    );
-    const restrictedByType = new Set(
-      getRestrictions(typeMenuRestrictions, userType)
-    );
-
-    return navItems.filter(
-      (item) =>
-        !restrictedByRole.has(item.href) && !restrictedByType.has(item.href)
-    );
-  }, [user?.role?.name, user?.type]);
 
   useEffect(() => {
     const parent = navItems.find((item) =>
@@ -270,15 +257,15 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             width: 150,
             height: 150,
             position: "relative",
-            borderRadius: "10%", // ทำให้เป็นวงกลม (ถ้าเป็นสี่เหลี่ยมให้ใช้ค่าเช่น "16px")
-            overflow: "hidden", // ตัดส่วนเกินออก
+            borderRadius: "10%",
+            overflow: "hidden",
           }}
         >
           <Image
             src="/images/logo.png"
             alt="Logo"
             fill
-            style={{ objectFit: "cover" }} // ใช้ cover จะเต็มวงมน
+            style={{ objectFit: "cover" }}
           />
         </Box>
       </Stack>
@@ -286,7 +273,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       <Divider sx={{ borderColor: "rgba(255,255,255,0.2)", mb: 2 }} />
 
       <List sx={{ flex: 1, overflowY: "auto" }}>
-        {filteredNavItems.map((item) => (
+        {navItems.map((item) => (
           <NavLink
             key={item.href}
             item={item}
