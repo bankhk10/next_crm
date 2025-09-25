@@ -2,14 +2,12 @@
 
 import { useActionState } from "react";
 import Image from "next/image";
-import { Prompt } from "next/font/google";
 import {
   Alert,
   Box,
   Button,
   Checkbox,
   FormControlLabel,
-  Link,
   Stack,
   TextField,
   Typography,
@@ -17,11 +15,7 @@ import {
 
 import { login, type LoginState } from "@/app/actions/auth";
 
-// โหลดฟอนต์ Prompt
-const prompt = Prompt({
-  weight: ["400", "500", "700"], // เลือกน้ำหนักฟอนต์
-  subsets: ["thai", "latin"], // ให้รองรับภาษาไทย
-});
+const promptFontFamily = '"Prompt", "Roboto", "Helvetica", "Arial", sans-serif';
 
 const initialState: LoginState = {};
 
@@ -29,12 +23,7 @@ export default function LoginForm() {
   const [state, formAction, isPending] = useActionState(login, initialState);
 
   return (
-    <Box
-      component="form"
-      action={formAction}
-      noValidate
-      sx={{ fontFamily: prompt.style.fontFamily }}
-    >
+    <Box component="form" action={formAction} noValidate sx={{ fontFamily: promptFontFamily }}>
       <Stack spacing={2}>
         <Stack spacing={2} alignItems="center" textAlign="center">
           <Box
@@ -61,17 +50,13 @@ export default function LoginForm() {
               component="p"
               variant="h4"
               fontWeight={800}
-              sx={{
-                textTransform: "uppercase",
-                letterSpacing: 2.4,
-                fontFamily: prompt.style.fontFamily, // 👈 บังคับใช้ Prompt
-              }}
+              sx={{ textTransform: "uppercase", letterSpacing: 2.4, fontFamily: promptFontFamily }}
             >
               ระบบ{" "}
               <Box
                 component="span"
                 color="#c62828"
-                sx={{ fontFamily: prompt.style.fontFamily }}
+                sx={{ fontFamily: promptFontFamily }}
               >
                 CS ONE
               </Box>
@@ -90,12 +75,7 @@ export default function LoginForm() {
           <Typography
             variant="h5"
             fontWeight={600}
-            sx={{
-              letterSpacing: 1.5,
-              fontFamily: prompt.style.fontFamily,
-              position: "relative",
-              top: 12,
-            }}
+            sx={{ letterSpacing: 1.5, fontFamily: promptFontFamily, position: "relative", top: 12 }}
           >
             เข้าสู่ระบบ
           </Typography>
@@ -115,7 +95,7 @@ export default function LoginForm() {
           InputLabelProps={{
             sx: {
               fontSize: { xs: "0.8rem", md: "0.95rem" },
-              fontFamily: prompt.style.fontFamily,
+              fontFamily: promptFontFamily,
             },
           }}
           sx={{
@@ -126,7 +106,7 @@ export default function LoginForm() {
                 paddingLeft: "14px",
                 paddingY: { xs: "6px", md: "10px" },
                 fontSize: { xs: "0.85rem", md: "1rem" },
-                fontFamily: prompt.style.fontFamily,
+                fontFamily: promptFontFamily,
               },
             },
             top: 12,
@@ -144,7 +124,7 @@ export default function LoginForm() {
           InputLabelProps={{
             sx: {
               fontSize: { xs: "0.8rem", md: "0.95rem" }, // ⬅ label
-              fontFamily: prompt.style.fontFamily,
+              fontFamily: promptFontFamily,
             },
           }}
           sx={{
@@ -155,7 +135,7 @@ export default function LoginForm() {
                 paddingLeft: "14px",
                 paddingY: { xs: "6px", md: "10px" },
                 fontSize: { xs: "0.85rem", md: "1rem" }, // ⬅ text ในช่อง
-                fontFamily: prompt.style.fontFamily,
+                fontFamily: promptFontFamily,
               },
             },
             top: 12,
@@ -199,7 +179,7 @@ export default function LoginForm() {
               backgroundColor: "#424242",
               boxShadow: "0 10px 18px rgba(0,0,0,0.2)",
             },
-            fontFamily: prompt.style.fontFamily,
+            fontFamily: promptFontFamily,
             fontSize: { xs: "0.9rem", md: "1rem" }, // ⬅ ขนาดฟอนต์เล็กลงบนมือถือ
           }}
         >
