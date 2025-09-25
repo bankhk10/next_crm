@@ -67,10 +67,26 @@ const navItems: NavItem[] = [
       { href: "/dashboard/activity-report", label: "รายงานกิจกรรม" },
     ],
   },
-  { href: "/dashboard/activities", label: "กิจกรรม", icon: <EventNoteOutlinedIcon fontSize="small" /> },
-  { href: "/dashboard/calendar", label: "ปฏิทิน", icon: <CalendarMonthOutlinedIcon fontSize="small" /> },
-  { href: "/dashboard/map", label: "แผนที่", icon: <MapOutlinedIcon fontSize="small" /> },
-  { href: "/dashboard/products", label: "สินค้า", icon: <Inventory2OutlinedIcon fontSize="small" /> },
+  {
+    href: "/dashboard/activities",
+    label: "กิจกรรม",
+    icon: <EventNoteOutlinedIcon fontSize="small" />,
+  },
+  {
+    href: "/dashboard/calendar",
+    label: "ปฏิทิน",
+    icon: <CalendarMonthOutlinedIcon fontSize="small" />,
+  },
+  {
+    href: "/dashboard/map",
+    label: "แผนที่",
+    icon: <MapOutlinedIcon fontSize="small" />,
+  },
+  {
+    href: "/dashboard/products",
+    label: "สินค้า",
+    icon: <Inventory2OutlinedIcon fontSize="small" />,
+  },
   {
     href: "/dashboard/sales",
     label: "การขาย",
@@ -80,10 +96,26 @@ const navItems: NavItem[] = [
       { href: "/dashboard/sales/quotations", label: "ใบเสนอราคา" },
     ],
   },
-  { href: "/dashboard/marketing", label: "การตลาด", icon: <CampaignOutlinedIcon fontSize="small" /> },
-  { href: "/dashboard/customers/list", label: "ลูกค้า", icon: <PeopleOutlineOutlinedIcon fontSize="small" /> },
-  { href: "/dashboard/employee", label: "พนักงาน", icon: <Diversity3OutlinedIcon fontSize="small" /> },
-  { href: "/dashboard/roles", label: "สิทธิ์", icon: <SecurityOutlinedIcon fontSize="small" /> },
+  {
+    href: "/dashboard/marketing",
+    label: "การตลาด",
+    icon: <CampaignOutlinedIcon fontSize="small" />,
+  },
+  {
+    href: "/dashboard/customers/list",
+    label: "ลูกค้า",
+    icon: <PeopleOutlineOutlinedIcon fontSize="small" />,
+  },
+  {
+    href: "/dashboard/employee",
+    label: "พนักงาน",
+    icon: <Diversity3OutlinedIcon fontSize="small" />,
+  },
+  {
+    href: "/dashboard/roles",
+    label: "สิทธิ์",
+    icon: <SecurityOutlinedIcon fontSize="small" />,
+  },
 ];
 
 const roleMenuRestrictions: MenuRestrictions = {
@@ -110,8 +142,16 @@ type NavLinkProps = {
   pathname: string;
 };
 
-function NavLink({ item, depth = 0, isOpen, onToggle, onLinkClick, pathname }: NavLinkProps) {
-  const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+function NavLink({
+  item,
+  depth = 0,
+  isOpen,
+  onToggle,
+  onLinkClick,
+  pathname,
+}: NavLinkProps) {
+  const isActive =
+    pathname === item.href || pathname.startsWith(`${item.href}/`);
 
   if (item.children?.length) {
     return (
@@ -125,7 +165,9 @@ function NavLink({ item, depth = 0, isOpen, onToggle, onLinkClick, pathname }: N
             "&:hover": { bgcolor: HOVER_BACKGROUND },
           }}
         >
-          <ListItemIcon sx={{ color: "inherit", minWidth: 32 }}>{item.icon}</ListItemIcon>
+          <ListItemIcon sx={{ color: "inherit", minWidth: 32 }}>
+            {item.icon}
+          </ListItemIcon>
           <ListItemText primary={item.label} />
           {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </ListItemButton>
@@ -141,7 +183,9 @@ function NavLink({ item, depth = 0, isOpen, onToggle, onLinkClick, pathname }: N
                       fontSize: 14,
                       borderRadius: 2,
                       color: childIsActive ? "white" : CHILD_TEXT_COLOR,
-                      bgcolor: childIsActive ? ACTIVE_BACKGROUND : "transparent",
+                      bgcolor: childIsActive
+                        ? ACTIVE_BACKGROUND
+                        : "transparent",
                       "&:hover": { bgcolor: HOVER_BACKGROUND },
                     }}
                   >
@@ -167,7 +211,9 @@ function NavLink({ item, depth = 0, isOpen, onToggle, onLinkClick, pathname }: N
           "&:hover": { bgcolor: HOVER_BACKGROUND },
         }}
       >
-        <ListItemIcon sx={{ color: "inherit", minWidth: 32 }}>{item.icon}</ListItemIcon>
+        <ListItemIcon sx={{ color: "inherit", minWidth: 32 }}>
+          {item.icon}
+        </ListItemIcon>
         <ListItemText primary={item.label} />
       </ListItemButton>
     </Link>
@@ -187,10 +233,17 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const filteredNavItems = useMemo(() => {
     const roleName = user?.role?.name ?? "";
     const userType = user?.type ?? "";
-    const restrictedByRole = new Set(getRestrictions(roleMenuRestrictions, roleName));
-    const restrictedByType = new Set(getRestrictions(typeMenuRestrictions, userType));
+    const restrictedByRole = new Set(
+      getRestrictions(roleMenuRestrictions, roleName)
+    );
+    const restrictedByType = new Set(
+      getRestrictions(typeMenuRestrictions, userType)
+    );
 
-    return navItems.filter((item) => !restrictedByRole.has(item.href) && !restrictedByType.has(item.href));
+    return navItems.filter(
+      (item) =>
+        !restrictedByRole.has(item.href) && !restrictedByType.has(item.href)
+    );
   }, [user?.role?.name, user?.type]);
 
   useEffect(() => {
@@ -212,8 +265,21 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
       }}
     >
       <Stack direction="row" justifyContent="center" alignItems="center" py={3}>
-        <Box sx={{ width: 96, height: 96, position: "relative" }}>
-          <Image src="/images/logo.jpg" alt="Logo" fill style={{ objectFit: "contain" }} />
+        <Box
+          sx={{
+            width: 150,
+            height: 150,
+            position: "relative",
+            borderRadius: "10%", // ทำให้เป็นวงกลม (ถ้าเป็นสี่เหลี่ยมให้ใช้ค่าเช่น "16px")
+            overflow: "hidden", // ตัดส่วนเกินออก
+          }}
+        >
+          <Image
+            src="/images/logo.jpg"
+            alt="Logo"
+            fill
+            style={{ objectFit: "cover" }} // ใช้ cover จะเต็มวงมน
+          />
         </Box>
       </Stack>
 
@@ -225,7 +291,11 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
             key={item.href}
             item={item}
             isOpen={openMenu === item.href}
-            onToggle={() => setOpenMenu((current) => (current === item.href ? null : item.href))}
+            onToggle={() =>
+              setOpenMenu((current) =>
+                current === item.href ? null : item.href
+              )
+            }
             onLinkClick={onClose}
             pathname={pathname}
           />
@@ -236,7 +306,12 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   return (
     <Fragment>
-      <Drawer anchor="left" open={isOpen} onClose={onClose} sx={{ display: { md: "none" } }}>
+      <Drawer
+        anchor="left"
+        open={isOpen}
+        onClose={onClose}
+        sx={{ display: { md: "none" } }}
+      >
         <Box sx={{ position: "absolute", top: 8, right: 8 }}>
           <IconButton onClick={onClose} sx={{ color: "white" }}>
             <CloseIcon />
@@ -245,7 +320,9 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
         {content}
       </Drawer>
 
-      <Box sx={{ display: { xs: "none", md: "flex" }, flexShrink: 0 }}>{content}</Box>
+      <Box sx={{ display: { xs: "none", md: "flex" }, flexShrink: 0 }}>
+        {content}
+      </Box>
     </Fragment>
   );
 }

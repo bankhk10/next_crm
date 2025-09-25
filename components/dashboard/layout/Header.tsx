@@ -53,7 +53,7 @@ export default function Header({ user, onMenuClick }: HeaderProps) {
         bgcolor: "transparent",
         color: "common.white",
         px: { xs: 2, md: 4 },
-        py: 1.5,
+        // py: 1.5,
       }}
     >
       <Toolbar disableGutters sx={{ justifyContent: "space-between" }}>
