@@ -111,20 +111,21 @@ export default function LoginForm() {
           placeholder="name@example.com"
           required
           type="email"
+          defaultValue={state?.values?.email || ""} // ✅ เก็บค่าอีเมลไว้
           InputLabelProps={{
             sx: {
-              fontSize: { xs: "0.8rem", md: "0.95rem" }, // ⬅ ปรับขนาด label
+              fontSize: { xs: "0.8rem", md: "0.95rem" },
               fontFamily: prompt.style.fontFamily,
             },
           }}
           sx={{
             "& .MuiOutlinedInput-root": {
               borderRadius: "20px",
-              height: { xs: 44, md: 50 }, // responsive สูง-เตี้ย
+              height: { xs: 44, md: 50 },
               "& input": {
                 paddingLeft: "14px",
                 paddingY: { xs: "6px", md: "10px" },
-                fontSize: { xs: "0.85rem", md: "1rem" }, // ⬅ ขนาดตัวหนังสือในช่อง
+                fontSize: { xs: "0.85rem", md: "1rem" },
                 fontFamily: prompt.style.fontFamily,
               },
             },
