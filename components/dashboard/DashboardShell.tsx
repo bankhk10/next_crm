@@ -2,9 +2,10 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { ReactNode, useMemo, useState } from "react";
+import { ReactNode, useMemo, useState, useTransition } from "react";
 
 import {
+  Button,
   Avatar,
   Box,
   Collapse,
@@ -31,8 +32,10 @@ import SettingsOutlinedIcon from "@mui/icons-material/SettingsOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 
 import type { SessionUser } from "@/lib/auth";
+import { logout } from "@/app/actions/auth";
 
 type NavItem = {
   label: string;
@@ -144,6 +147,8 @@ function NavLink({ item, depth = 0 }: { item: NavItem; depth?: number }) {
 }
 
 export default function DashboardShell({ children, user }: DashboardShellProps) {
+  const [isLoggingOut, startLogout] = useTransition();
+
   return (
     <Box sx={{ display: "flex", minHeight: "100vh", bgcolor: "#f1f3f6" }}>
       <Box
@@ -232,6 +237,25 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
               <Avatar sx={{ bgcolor: "rgba(255,255,255,0.2)", width: 36, height: 36 }}>
                 {user.name?.[0]?.toUpperCase() ?? user.email[0].toUpperCase()}
               </Avatar>
+              <Button
+                variant="outlined"
+                color="inherit"
+                size="small"
+                onClick={() => startLogout(() => logout())}
+                disabled={isLoggingOut}
+                startIcon={<LogoutOutlinedIcon fontSize="small" />}
+                sx={{
+                  color: "common.white",
+                  borderColor: "rgba(255,255,255,0.6)",
+                  fontWeight: 600,
+                  "&:hover": {
+                    borderColor: "common.white",
+                    bgcolor: "rgba(255,255,255,0.12)",
+                  },
+                }}
+              >
+                ออกจากระบบ
+              </Button>
             </Stack>
           </Stack>
         </Box>
