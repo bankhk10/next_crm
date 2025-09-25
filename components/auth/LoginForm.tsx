@@ -79,7 +79,7 @@ export default function LoginForm() {
             <Typography
               variant="h5"
               fontWeight={600}
-              sx={{ position: "relative", top: 8 }}
+              sx={{ position: "relative", top: 2 }}
             >
               Smart Crop Smart Solutions
             </Typography>
