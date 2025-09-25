@@ -5,6 +5,11 @@ import { CacheProvider } from "@emotion/react";
 import { ThemeProvider, CssBaseline } from "@mui/material";
 import createEmotionCache from "../src/createEmotionCache";
 import theme from "../src/theme";
+import "@fontsource/prompt/400.css";
+import "@fontsource/prompt/500.css";
+import "@fontsource/prompt/600.css";
+import "@fontsource/prompt/700.css";
+import "@fontsource/prompt/800.css";
 
 const clientSideEmotionCache = createEmotionCache();
 
