@@ -27,7 +27,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
           component="nav"
           sx={{
             width: 260,
-            bgcolor: "#c62828",
+            bgcolor: "#b92626",
             color: "common.white",
             display: { xs: "none", md: "flex" },
             flexDirection: "column",
@@ -53,7 +53,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
           {/* Header */}
           <Box
             sx={{
-              bgcolor: "#d32f2f",
+              bgcolor: "#b92626",
               color: "common.white",
               flexShrink: 0,
             }}
