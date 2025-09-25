@@ -1,6 +1,8 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import {
   Avatar,
   Badge,
@@ -33,21 +35,48 @@ import ShoppingCartRoundedIcon from "@mui/icons-material/ShoppingCartRounded";
 import TrendingUpRoundedIcon from "@mui/icons-material/TrendingUpRounded";
 import WorkspacePremiumRoundedIcon from "@mui/icons-material/WorkspacePremiumRounded";
 
+type DashboardPlaceholder = {
+  title: string;
+  subtitle?: string;
+  message?: string;
+};
+
 type DashboardViewProps = {
   userName: string;
+  placeholder?: DashboardPlaceholder;
 };
 
 const sidebarItems = [
   {
     label: "รายงานภาพรวม",
     icon: <HomeRoundedIcon fontSize="medium" />,
-    active: true,
+    href: "/dashboard",
   },
-  { label: "ฐานข้อมูลลูกค้า", icon: <PeopleAltRoundedIcon fontSize="medium" /> },
-  { label: "โอกาสทางการขาย", icon: <TrendingUpRoundedIcon fontSize="medium" /> },
-  { label: "คำสั่งซื้อ", icon: <ShoppingCartRoundedIcon fontSize="medium" /> },
-  { label: "ติดตามผล", icon: <AssessmentRoundedIcon fontSize="medium" /> },
-  { label: "โปรโมชั่น", icon: <CampaignRoundedIcon fontSize="medium" /> },
+  {
+    label: "ฐานข้อมูลลูกค้า",
+    icon: <PeopleAltRoundedIcon fontSize="medium" />,
+    href: "/dashboard/customers",
+  },
+  {
+    label: "โอกาสทางการขาย",
+    icon: <TrendingUpRoundedIcon fontSize="medium" />,
+    href: "/dashboard/opportunities",
+  },
+  {
+    label: "คำสั่งซื้อ",
+    icon: <ShoppingCartRoundedIcon fontSize="medium" />,
+    href: "/dashboard/orders",
+  },
+  {
+    label: "ติดตามผล",
+    icon: <AssessmentRoundedIcon fontSize="medium" />,
+    href: "/dashboard/follow-ups",
+  },
+  {
+    label: "โปรโมชั่น",
+    icon: <CampaignRoundedIcon fontSize="medium" />,
+    href: "/dashboard/promotions",
+  },
 ];
 
 const summaryCards = [
@@ -154,7 +183,298 @@ const promotions: Promotion[] = [
   },
 ];
 
-export default function DashboardView({ userName }: DashboardViewProps) {
+export default function DashboardView({ userName, placeholder }: DashboardViewProps) {
+  const pathname = usePathname();
+  const headerTitle = placeholder?.title ?? "ภาพรวมการขาย";
+  const headerSubtitle = placeholder?.subtitle ?? "ยอดขายล่าสุดและกิจกรรมประจำวัน";
+
+  const mainContent = placeholder ? (
+    <Box
+      component="main"
+      sx={{
+        flex: 1,
+        px: { xs: 3, lg: 5 },
+        py: { xs: 6, lg: 8 },
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <Paper
+        elevation={0}
+        sx={{
+          maxWidth: 520,
+          width: "100%",
+          p: { xs: 6, md: 8 },
+          borderRadius: 4,
+          boxShadow: "0 16px 40px rgba(0,0,0,0.06)",
+          textAlign: "center",
+        }}
+      >
+        <Stack spacing={2.5} alignItems="center">
+          <Box
+            sx={{
+              width: 72,
+              height: 72,
+              borderRadius: "50%",
+              bgcolor: "rgba(198,40,40,0.08)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#c62828",
+            }}
+          >
+            <WorkspacePremiumRoundedIcon fontSize="large" />
+          </Box>
+          <Stack spacing={1} sx={{ width: "100%" }}>
+            <Typography variant="h5" fontWeight={700} color="text.primary">
+              {placeholder.title}
+            </Typography>
+            {placeholder.subtitle ? (
+              <Typography variant="body1" color="text.secondary">
+                {placeholder.subtitle}
+              </Typography>
+            ) : null}
+            <Typography variant="body2" color="text.secondary">
+              {placeholder.message ?? "หน้านี้กำลังอยู่ระหว่างการพัฒนา โปรดกลับมาอีกครั้งในเร็ว ๆ นี้"}
+            </Typography>
+          </Stack>
+        </Stack>
+      </Paper>
+    </Box>
+  ) : (
+    <Box component="main" sx={{ flex: 1, px: { xs: 3, lg: 5 }, py: { xs: 3, lg: 4 } }}>
+      <Box
+        sx={{
+          display: "grid",
+          gap: 3,
+          gridTemplateColumns: {
+            xs: "1fr",
+            md: "repeat(2, minmax(0, 1fr))",
+            xl: "repeat(4, minmax(0, 1fr))",
+          },
+        }}
+      >
+        {summaryCards.map((card) => (
+          <Paper
+            key={card.title}
+            elevation={0}
+            sx={{
+              borderRadius: 4,
+              p: 3,
+              bgcolor: "#fff",
+              boxShadow: "0 12px 30px rgba(0,0,0,0.05)",
+              display: "flex",
+              flexDirection: "column",
+              gap: 1,
+              height: "100%",
+            }}
+          >
+            <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
+              <Box>
+                <Typography variant="subtitle2" color="text.secondary">
+                  {card.title}
+                </Typography>
+                <Typography variant="h5" fontWeight={700} sx={{ mt: 0.5 }}>
+                  {card.amount}
+                </Typography>
+                <Typography variant="body2" color="text.secondary">
+                  {card.subLabel}
+                </Typography>
+                <Typography variant="subtitle2" sx={{ color: card.highlightColor, fontWeight: 700 }}>
+                  {card.highlight}
+                </Typography>
+              </Box>
+              <Avatar
+                sx={{
+                  bgcolor: card.avatarBg,
+                  color: card.iconColor,
+                  width: 56,
+                  height: 56,
+                  boxShadow: "0 10px 25px rgba(0,0,0,0.12)",
+                }}
+              >
+                {card.icon}
+              </Avatar>
+            </Stack>
+          </Paper>
+        ))}
+      </Box>
+
+      <Box
+        sx={{
+          mt: 1,
+          display: "grid",
+          gap: 3,
+          gridTemplateColumns: { xs: "1fr", lg: "minmax(0, 2fr) minmax(0, 1fr)" },
+          alignItems: "stretch",
+        }}
+      >
+        <Paper
+          elevation={0}
+          sx={{
+            borderRadius: 4,
+            p: { xs: 3, md: 4 },
+            boxShadow: "0 12px 30px rgba(0,0,0,0.05)",
+            bgcolor: "#fff",
+          }}
+        >
+          <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={2}>
+            <Box>
+              <Typography variant="h6" fontWeight={700}>
+                ยอดขายจากลูกค้า
+              </Typography>
+              <Typography variant="body2" color="text.secondary">
+                เปรียบเทียบเป้าหมายและยอดขายจริงในปี 2024
+              </Typography>
+            </Box>
+            <Chip label="รายงานประจำเดือน" color="error" variant="outlined" sx={{ borderRadius: 999, fontWeight: 600 }} />
+          </Stack>
+
+          <Box sx={{ mt: 4 }}>
+            <BarChart
+              dataset={revenueSeries}
+              height={300}
+              xAxis={[{ dataKey: "month", scaleType: "band" }]}
+              series={[
+                { dataKey: "target", label: "Target", color: "#ffd54f" },
+                { dataKey: "sales", label: "Sales Rate", color: "#ef5350" },
+                { dataKey: "invoice", label: "Invoice", color: "#42a5f5" },
+              ]}
+              margin={{ top: 10, bottom: 20, left: 50, right: 10 }}
+            />
+          </Box>
+
+          <Divider sx={{ my: 3 }} />
+
+          <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
+            {topCustomers.map((customer) => (
+              <Box key={customer.label} sx={{ flex: 1 }}>
+                <Typography variant="subtitle2" color="text.secondary">
+                  {customer.label}
+                </Typography>
+                <Typography variant="h6" fontWeight={700} sx={{ mt: 0.5 }}>
+                  {customer.value}
+                </Typography>
+                <LinearProgress
+                  variant="determinate"
+                  value={customer.rate}
+                  sx={{
+                    mt: 1.5,
+                    height: 10,
+                    borderRadius: 999,
+                    bgcolor: "rgba(0,0,0,0.06)",
+                    "& .MuiLinearProgress-bar": {
+                      borderRadius: 999,
+                      bgcolor: customer.color,
+                    },
+                  }}
+                />
+              </Box>
+            ))}
+          </Stack>
+        </Paper>
+
+        <Stack spacing={3} sx={{ minWidth: 0 }}>
+          <Paper
+            elevation={0}
+            sx={{
+              borderRadius: 4,
+              p: 3,
+              boxShadow: "0 12px 30px rgba(0,0,0,0.05)",
+              bgcolor: "#fff",
+            }}
+          >
+            <Typography variant="h6" fontWeight={700}>
+              กิจกรรม
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              สถานะการติดตามลูกค้าในสัปดาห์นี้
+            </Typography>
+
+            <Stack spacing={2.5} sx={{ mt: 3 }}>
+              {activities.map((activity) => (
+                <Box key={activity.label}>
+                  <Stack direction="row" justifyContent="space-between" alignItems="center">
+                    <Typography variant="subtitle2" fontWeight={600}>
+                      {activity.label}
+                    </Typography>
+                    <Typography variant="subtitle2" fontWeight={700}>
+                      {activity.value}%
+                    </Typography>
+                  </Stack>
+                  <LinearProgress
+                    variant="determinate"
+                    value={activity.value}
+                    sx={{
+                      mt: 1,
+                      height: 8,
+                      borderRadius: 999,
+                      bgcolor: "rgba(0,0,0,0.08)",
+                      "& .MuiLinearProgress-bar": {
+                        borderRadius: 999,
+                        bgcolor: activity.color,
+                      },
+                    }}
+                  />
+                </Box>
+              ))}
+            </Stack>
+          </Paper>
+
+          <Paper
+            elevation={0}
+            sx={{
+              borderRadius: 4,
+              p: 3,
+              boxShadow: "0 12px 30px rgba(0,0,0,0.05)",
+              bgcolor: "#fff",
+            }}
+          >
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+              <Typography variant="h6" fontWeight={700}>
+                โปรโมชั่น
+              </Typography>
+              <WorkspacePremiumRoundedIcon color="warning" />
+            </Stack>
+            <Typography variant="body2" color="text.secondary">
+              แคมเปญและสิทธิพิเศษประจำเดือนนี้
+            </Typography>
+
+            <Stack spacing={2.5} sx={{ mt: 3 }}>
+              {promotions.map((promotion) => (
+                <Box
+                  key={promotion.title}
+                  sx={{
+                    p: 2,
+                    borderRadius: 3,
+                    bgcolor: promotion.color,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 1,
+                  }}
+                >
+                  <Typography variant="subtitle1" fontWeight={700}>
+                    {promotion.title}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {promotion.description}
+                  </Typography>
+                  <Chip
+                    label={promotion.chipLabel}
+                    color={promotion.chipColor}
+                    size="small"
+                    sx={{ alignSelf: "flex-start", borderRadius: 999, fontWeight: 600 }}
+                  />
+                </Box>
+              ))}
+            </Stack>
+          </Paper>
+        </Stack>
+      </Box>
+    </Box>
+  );
+
   return (
     <Box
       sx={{
@@ -200,36 +520,42 @@ export default function DashboardView({ userName }: DashboardViewProps) {
         </Stack>
 
         <List sx={{ flex: 1, display: "flex", flexDirection: "column", gap: 1 }}>
-          {sidebarItems.map((item) => (
-            <ListItemButton
-              key={item.label}
-              selected={item.active}
-              sx={{
-                borderRadius: 2,
-                bgcolor: item.active ? "rgba(255,255,255,0.18)" : "transparent",
-                color: "inherit",
-                "&.Mui-selected": {
-                  bgcolor: "rgba(255,255,255,0.22)",
-                  "&:hover": {
-                    bgcolor: "rgba(255,255,255,0.25)",
+          {sidebarItems.map((item) => {
+            const isSelected = pathname === item.href;
+
+            return (
+              <ListItemButton
+                key={item.label}
+                component={Link}
+                href={item.href}
+                selected={isSelected}
+                sx={{
+                  borderRadius: 2,
+                  bgcolor: isSelected ? "rgba(255,255,255,0.18)" : "transparent",
+                  color: "inherit",
+                  "&.Mui-selected": {
+                    bgcolor: "rgba(255,255,255,0.22)",
+                    "&:hover": {
+                      bgcolor: "rgba(255,255,255,0.25)",
+                    },
                   },
-                },
-                "&:hover": {
-                  bgcolor: "rgba(255,255,255,0.12)",
-                },
-              }}
-            >
-              <ListItemIcon sx={{ color: "inherit", minWidth: 40 }}>{item.icon}</ListItemIcon>
-              <ListItemText
-                primary={item.label}
-                primaryTypographyProps={{
-                  fontWeight: item.active ? 700 : 500,
-                  fontSize: "0.95rem",
+                  "&:hover": {
+                    bgcolor: "rgba(255,255,255,0.12)",
+                  },
                 }}
-                sx={{ display: { xs: "none", lg: "block" } }}
-              />
-            </ListItemButton>
-          ))}
+              >
+                <ListItemIcon sx={{ color: "inherit", minWidth: 40 }}>{item.icon}</ListItemIcon>
+                <ListItemText
+                  primary={item.label}
+                  primaryTypographyProps={{
+                    fontWeight: isSelected ? 700 : 500,
+                    fontSize: "0.95rem",
+                  }}
+                  sx={{ display: { xs: "none", lg: "block" } }}
+                />
+              </ListItemButton>
+            );
+          })}
         </List>
 
         <Stack spacing={2} display={{ xs: "none", lg: "flex" }}>
@@ -270,10 +596,10 @@ export default function DashboardView({ userName }: DashboardViewProps) {
           >
             <Stack spacing={0.5}>
               <Typography variant="h5" fontWeight={700} color="text.primary">
-                ภาพรวมการขาย
+                {headerTitle}
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                ยอดขายล่าสุดและกิจกรรมประจำวัน
+                {headerSubtitle}
               </Typography>
             </Stack>
 
@@ -349,234 +675,7 @@ export default function DashboardView({ userName }: DashboardViewProps) {
           </Stack>
         </Box>
 
-        <Box component="main" sx={{ flex: 1, px: { xs: 3, lg: 5 }, py: { xs: 3, lg: 4 } }}>
-          <Box
-            sx={{
-              display: "grid",
-              gap: 3,
-              gridTemplateColumns: {
-                xs: "1fr",
-                md: "repeat(2, minmax(0, 1fr))",
-                xl: "repeat(4, minmax(0, 1fr))",
-              },
-            }}
-          >
-            {summaryCards.map((card) => (
-              <Paper
-                key={card.title}
-                elevation={0}
-                sx={{
-                  borderRadius: 4,
-                  p: 3,
-                  bgcolor: "#fff",
-                  boxShadow: "0 12px 30px rgba(0,0,0,0.05)",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: 1,
-                  height: "100%",
-                }}
-              >
-                <Stack direction="row" justifyContent="space-between" alignItems="flex-start">
-                  <Box>
-                    <Typography variant="subtitle2" color="text.secondary">
-                      {card.title}
-                    </Typography>
-                    <Typography variant="h5" fontWeight={800} sx={{ mt: 0.5 }}>
-                      {card.amount}
-                    </Typography>
-                  </Box>
-                  <Avatar
-                    sx={{
-                      bgcolor: card.avatarBg,
-                      color: card.iconColor,
-                      width: 46,
-                      height: 46,
-                    }}
-                  >
-                    {card.icon}
-                  </Avatar>
-                </Stack>
-                <Typography variant="body2" color="text.secondary">
-                  {card.subLabel}
-                </Typography>
-                <Typography variant="subtitle2" sx={{ color: card.highlightColor, fontWeight: 700 }}>
-                  {card.highlight}
-                </Typography>
-              </Paper>
-            ))}
-          </Box>
-
-          <Box
-            sx={{
-              mt: 1,
-              display: "grid",
-              gap: 3,
-              gridTemplateColumns: { xs: "1fr", lg: "minmax(0, 2fr) minmax(0, 1fr)" },
-              alignItems: "stretch",
-            }}
-          >
-            <Paper
-              elevation={0}
-              sx={{
-                borderRadius: 4,
-                p: { xs: 3, md: 4 },
-                boxShadow: "0 12px 30px rgba(0,0,0,0.05)",
-                bgcolor: "#fff",
-              }}
-            >
-              <Stack direction={{ xs: "column", sm: "row" }} justifyContent="space-between" alignItems={{ xs: "flex-start", sm: "center" }} spacing={2}>
-                <Box>
-                  <Typography variant="h6" fontWeight={700}>
-                      ยอดขายจากลูกค้า
-                    </Typography>
-                    <Typography variant="body2" color="text.secondary">
-                      เปรียบเทียบเป้าหมายและยอดขายจริงในปี 2024
-                    </Typography>
-                  </Box>
-                  <Chip label="รายงานประจำเดือน" color="error" variant="outlined" sx={{ borderRadius: 999, fontWeight: 600 }} />
-                </Stack>
-
-                <Box sx={{ mt: 4 }}>
-                  <BarChart
-                    dataset={revenueSeries}
-                    height={300}
-                    xAxis={[{ dataKey: "month", scaleType: "band" }]}
-                    series={[
-                      { dataKey: "target", label: "Target", color: "#ffd54f" },
-                      { dataKey: "sales", label: "Sales Rate", color: "#ef5350" },
-                      { dataKey: "invoice", label: "Invoice", color: "#42a5f5" },
-                    ]}
-                    margin={{ top: 10, bottom: 20, left: 50, right: 10 }}
-                  />
-                </Box>
-
-                <Divider sx={{ my: 3 }} />
-
-                <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
-                  {topCustomers.map((customer) => (
-                    <Box key={customer.label} sx={{ flex: 1 }}>
-                      <Typography variant="subtitle2" color="text.secondary">
-                        {customer.label}
-                      </Typography>
-                      <Typography variant="h6" fontWeight={700} sx={{ mt: 0.5 }}>
-                        {customer.value}
-                      </Typography>
-                      <LinearProgress
-                        variant="determinate"
-                        value={customer.rate}
-                        sx={{
-                          mt: 1.5,
-                          height: 10,
-                          borderRadius: 999,
-                          bgcolor: "rgba(0,0,0,0.06)",
-                          "& .MuiLinearProgress-bar": {
-                            borderRadius: 999,
-                            bgcolor: customer.color,
-                          },
-                        }}
-                      />
-                    </Box>
-                  ))}
-                </Stack>
-              </Paper>
-            <Stack spacing={3} sx={{ minWidth: 0 }}>
-              <Paper
-                elevation={0}
-                sx={{
-                  borderRadius: 4,
-                  p: 3,
-                  boxShadow: "0 12px 30px rgba(0,0,0,0.05)",
-                  bgcolor: "#fff",
-                }}
-              >
-                <Typography variant="h6" fontWeight={700}>
-                  กิจกรรม
-                </Typography>
-                  <Typography variant="body2" color="text.secondary">
-                    สถานะการติดตามลูกค้าในสัปดาห์นี้
-                  </Typography>
-
-                  <Stack spacing={2.5} sx={{ mt: 3 }}>
-                    {activities.map((activity) => (
-                      <Box key={activity.label}>
-                        <Stack direction="row" justifyContent="space-between" alignItems="center">
-                          <Typography variant="subtitle2" fontWeight={600}>
-                            {activity.label}
-                          </Typography>
-                          <Typography variant="subtitle2" fontWeight={700}>
-                            {activity.value}%
-                          </Typography>
-                        </Stack>
-                        <LinearProgress
-                          variant="determinate"
-                          value={activity.value}
-                          sx={{
-                            mt: 1,
-                            height: 8,
-                            borderRadius: 999,
-                            bgcolor: "rgba(0,0,0,0.08)",
-                            "& .MuiLinearProgress-bar": {
-                              borderRadius: 999,
-                              bgcolor: activity.color,
-                            },
-                          }}
-                        />
-                      </Box>
-                    ))}
-                  </Stack>
-              </Paper>
-
-              <Paper
-                elevation={0}
-                sx={{
-                  borderRadius: 4,
-                  p: 3,
-                  boxShadow: "0 12px 30px rgba(0,0,0,0.05)",
-                  bgcolor: "#fff",
-                }}
-              >
-                <Stack direction="row" justifyContent="space-between" alignItems="center">
-                  <Typography variant="h6" fontWeight={700}>
-                    โปรโมชั่น
-                    </Typography>
-                    <WorkspacePremiumRoundedIcon color="warning" />
-                  </Stack>
-                  <Typography variant="body2" color="text.secondary">
-                    แคมเปญและสิทธิพิเศษประจำเดือนนี้
-                  </Typography>
-
-                  <Stack spacing={2.5} sx={{ mt: 3 }}>
-                    {promotions.map((promotion) => (
-                      <Box
-                        key={promotion.title}
-                        sx={{
-                          p: 2,
-                          borderRadius: 3,
-                          bgcolor: promotion.color,
-                          display: "flex",
-                          flexDirection: "column",
-                          gap: 1,
-                        }}
-                      >
-                        <Typography variant="subtitle1" fontWeight={700}>
-                          {promotion.title}
-                        </Typography>
-                        <Typography variant="body2" color="text.secondary">
-                          {promotion.description}
-                        </Typography>
-                        <Chip
-                          label={promotion.chipLabel}
-                          color={promotion.chipColor}
-                          size="small"
-                          sx={{ alignSelf: "flex-start", borderRadius: 999, fontWeight: 600 }}
-                        />
-                      </Box>
-                    ))}
-                  </Stack>
-              </Paper>
-            </Stack>
-          </Box>
-        </Box>
+        {mainContent}
       </Box>
     </Box>
   );
