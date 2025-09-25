@@ -105,23 +105,30 @@ export default function LoginForm() {
 
         <TextField
           autoComplete="email"
-          autoFocus
           fullWidth
           label="USERNAME"
           name="email"
           placeholder="name@example.com"
           required
           type="email"
+          InputLabelProps={{
+            sx: {
+              fontSize: { xs: "0.8rem", md: "0.95rem" }, // ⬅ ปรับขนาด label
+              fontFamily: prompt.style.fontFamily,
+            },
+          }}
           sx={{
             "& .MuiOutlinedInput-root": {
               borderRadius: "20px",
-              height: 50, // 👈 กำหนดความสูงเอง (เช่น 44px)
+              height: { xs: 44, md: 50 }, // responsive สูง-เตี้ย
               "& input": {
-                paddingLeft: "14px", // ดันข้อความไปทางขวา
-                paddingY: "10px", // ปรับความสูงด้านใน
+                paddingLeft: "14px",
+                paddingY: { xs: "6px", md: "10px" },
+                fontSize: { xs: "0.85rem", md: "1rem" }, // ⬅ ขนาดตัวหนังสือในช่อง
+                fontFamily: prompt.style.fontFamily,
               },
             },
-             top: 12,
+            top: 12,
           }}
         />
 
@@ -133,16 +140,24 @@ export default function LoginForm() {
           placeholder="••••••••"
           required
           type="password"
+          InputLabelProps={{
+            sx: {
+              fontSize: { xs: "0.8rem", md: "0.95rem" }, // ⬅ label
+              fontFamily: prompt.style.fontFamily,
+            },
+          }}
           sx={{
             "& .MuiOutlinedInput-root": {
               borderRadius: "20px",
-              height: 50, // 👈 เท่ากับ USERNAME
+              height: { xs: 44, md: 50 },
               "& input": {
                 paddingLeft: "14px",
-                paddingY: "10px",
+                paddingY: { xs: "6px", md: "10px" },
+                fontSize: { xs: "0.85rem", md: "1rem" }, // ⬅ text ในช่อง
+                fontFamily: prompt.style.fontFamily,
               },
             },
-             top: 12,
+            top: 12,
           }}
         />
 
@@ -173,17 +188,18 @@ export default function LoginForm() {
             textTransform: "none",
             fontWeight: 700,
             borderRadius: 999,
-            py: 1.2,
-            px: 4,
-            width: "40%",
+            py: { xs: 1, md: 1.2 }, // ⬅ padding แนวตั้งลดลงบนจอเล็ก
+            px: { xs: 3, md: 4 }, // ⬅ padding แนวนอนลดลงบนจอเล็ก
+            width: { xs: "100%", sm: "70%", md: "40%" }, // ⬅ บนมือถือเต็มจอ
             alignSelf: "center",
-            backgroundColor: "#757575", // 👈 สีเทา MUI grey[500]
+            backgroundColor: "#757575",
             boxShadow: "0 8px 16px rgba(0,0,0,0.15)",
             "&:hover": {
-              backgroundColor: "#424242", // 👈 สีเทาเข้มกว่าเมื่อ hover
+              backgroundColor: "#424242",
               boxShadow: "0 10px 18px rgba(0,0,0,0.2)",
             },
             fontFamily: prompt.style.fontFamily,
+            fontSize: { xs: "0.9rem", md: "1rem" }, // ⬅ ขนาดฟอนต์เล็กลงบนมือถือ
           }}
         >
           {isPending ? "กำลังตรวจสอบ..." : "เข้าสู่ระบบ"}
