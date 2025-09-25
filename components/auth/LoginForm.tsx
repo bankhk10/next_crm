@@ -48,7 +48,7 @@ export default function LoginForm() {
             }}
           >
             <Image
-              src="/images/logo.jpg"
+              src="/images/logo.png"
               alt="CS ONE"
               fill
               sizes="(max-width: 800px) 140px, 180px"

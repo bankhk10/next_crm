@@ -275,7 +275,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
           }}
         >
           <Image
-            src="/images/logo.jpg"
+            src="/images/logo.png"
             alt="Logo"
             fill
             style={{ objectFit: "cover" }} // ใช้ cover จะเต็มวงมน
