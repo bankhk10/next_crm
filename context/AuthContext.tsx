@@ -1,8 +1,8 @@
 "use client";
 
-import React, { createContext, useContext } from "react";
+import React, { ReactNode, createContext, useCallback, useContext, useMemo } from "react";
 
-type SessionUser = {
+export type SessionUser = {
   id: string;
   email: string;
   name: string | null;
@@ -17,17 +17,24 @@ type AuthContextValue = {
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-export function AuthProvider({ children, user }: { children: React.ReactNode; user: SessionUser | null }) {
-  // Minimal logout that just navigates to server action; components may call a client action.
-  const logout = () => {
-    // navigate to /api/logout or call server action - keep minimal here
-    // We trigger a full redirect to / which will clear session via server action if used.
+type AuthProviderProps = {
+  children: ReactNode;
+  user: SessionUser | null;
+};
+
+export function AuthProvider({ children, user }: AuthProviderProps) {
+  const logout = useCallback(() => {
     if (typeof window !== "undefined") {
       window.location.href = "/logout";
     }
-  };
+  }, []);
 
-  return <AuthContext.Provider value={{ user, logout }}>{children}</AuthContext.Provider>;
+  const value = useMemo<AuthContextValue>(
+    () => ({ user, logout }),
+    [logout, user]
+  );
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuth() {
