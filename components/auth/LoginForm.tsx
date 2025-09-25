@@ -15,7 +15,7 @@ import {
   Typography,
 } from "@mui/material";
 
-import { login, type LoginState } from "@/app/actions/auth";
+import { login, type LoginState } from "@/app/api/auth/actions";
 
 // โหลดฟอนต์ Prompt
 const prompt = Prompt({
