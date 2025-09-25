@@ -15,7 +15,8 @@ import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNone
 import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { useAuth, SessionUser } from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthContext";
+import type { SessionUser } from "@/lib/authTypes";
 
 type HeaderProps = {
   user: SessionUser | null;

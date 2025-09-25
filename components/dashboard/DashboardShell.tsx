@@ -4,7 +4,8 @@ import { ReactNode, useCallback, useState } from "react";
 import { Box } from "@mui/material";
 import Sidebar from "./layout/Sidebar";
 import Header from "./layout/Header";
-import { AuthProvider, SessionUser } from "@/context/AuthContext";
+import { AuthProvider } from "@/context/AuthContext";
+import type { SessionUser } from "@/lib/authTypes";
 
 type DashboardShellProps = {
   children: ReactNode;

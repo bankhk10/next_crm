@@ -1,14 +1,7 @@
 "use client";
 
 import React, { ReactNode, createContext, useCallback, useContext, useMemo } from "react";
-
-export type SessionUser = {
-  id: string;
-  email: string;
-  name: string | null;
-  role?: any;
-  type?: string;
-};
+import type { SessionUser } from "@/lib/authTypes";
 
 type AuthContextValue = {
   user: SessionUser | null;

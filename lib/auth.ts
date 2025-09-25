@@ -2,6 +2,7 @@ import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 
 import { prisma } from "@/lib/prisma";
+import type { SessionUser } from "@/lib/authTypes";
 
 const SESSION_COOKIE_NAME = "next-crm-session";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
@@ -45,11 +46,7 @@ async function verifySessionToken(token: string) {
   }
 }
 
-export type SessionUser = {
-  id: string;
-  email: string;
-  name: string | null;
-};
+// SessionUser type is imported from lib/authTypes
 
 export async function startUserSession(
   userId: string,
