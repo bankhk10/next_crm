@@ -1,44 +1,32 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { Box } from "@mui/material";
-import Sidebar from "../_components/Sidebar"; // เอาของคุณเองมาแทนได้
-import Header from "../_components/Header"; // เอาของคุณเองมาแทนได้
+import Sidebar from "../_components/Sidebar";
+import Header from "../_components/Header";
 import { AuthProvider } from "@/context/AuthContext";
 
 type DashboardShellProps = {
   children: ReactNode;
-  user: any; // แก้เป็น SessionUser ถ้ามี
+  user: any; // หรือ SessionUser ถ้ามี type
 };
 
 export default function DashboardShell({ children, user }: DashboardShellProps) {
+  // state คุม sidebar
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
   return (
-    <AuthProvider user={user}>
+    <AuthProvider initialUser={user}>
       <Box
         sx={{
           position: "fixed",
           inset: 0,
           display: "flex",
-          bgcolor: "#b92626", // พื้นหลังแดง เหมือนของเดิม
+          bgcolor: "#b92626",
         }}
       >
         {/* Sidebar */}
-        <Box
-          component="nav"
-          sx={{
-            width: 260,
-            bgcolor: "#b92626",
-            color: "common.white",
-            display: { xs: "none", md: "flex" },
-            flexDirection: "column",
-            py: 3,
-            px: 2,
-            flexShrink: 0,
-            overflowY: "auto",
-          }}
-        >
-          <Sidebar isOpen={false} onClose={() => {}} />
-        </Box>
+        <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
 
         {/* Content */}
         <Box
@@ -58,7 +46,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
               flexShrink: 0,
             }}
           >
-            <Header user={user} onMenuClick={() => {}} />
+            <Header user={user} onMenuClick={() => setIsSidebarOpen(true)} />
           </Box>
 
           {/* Main */}
@@ -70,7 +58,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
               overflowX: "hidden",
               overflowY: "auto",
               bgcolor: "grey.100",
-              borderTopLeftRadius: 24, // rounded-tl-3xl
+              borderTopLeftRadius: 24,
               p: { xs: 2, md: 4 },
             }}
           >
