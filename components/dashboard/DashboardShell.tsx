@@ -1,22 +1,24 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode, useCallback, useState } from "react";
 import { Box } from "@mui/material";
-import Sidebar from "../_components/Sidebar";
-import Header from "../_components/Header";
-import { AuthProvider } from "@/context/AuthContext";
+import Sidebar from "./layout/Sidebar";
+import Header from "./layout/Header";
+import { AuthProvider, SessionUser } from "@/context/AuthContext";
 
 type DashboardShellProps = {
   children: ReactNode;
-  user: any; // หรือ SessionUser ถ้ามี type
+  user: SessionUser | null;
 };
 
 export default function DashboardShell({ children, user }: DashboardShellProps) {
-  // state คุม sidebar
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+  const openSidebar = useCallback(() => setIsSidebarOpen(true), []);
+  const closeSidebar = useCallback(() => setIsSidebarOpen(false), []);
+
   return (
-    <AuthProvider initialUser={user}>
+    <AuthProvider user={user}>
       <Box
         sx={{
           position: "fixed",
@@ -26,7 +28,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
         }}
       >
         {/* Sidebar */}
-        <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
+        <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
 
         {/* Content */}
         <Box
@@ -46,7 +48,7 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
               flexShrink: 0,
             }}
           >
-            <Header user={user} onMenuClick={() => setIsSidebarOpen(true)} />
+            <Header user={user} onMenuClick={openSidebar} />
           </Box>
 
           {/* Main */}

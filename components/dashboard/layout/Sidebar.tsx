@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useEffect } from "react";
+import { Fragment, ReactNode, useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import {
   Box,
@@ -32,9 +32,30 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 import { useAuth } from "@/context/AuthContext";
 
+type NavChild = {
+  href: string;
+  label: string;
+};
 
-// --- Nav items ---
-const navItems = [
+type NavItem = {
+  href: string;
+  label: string;
+  icon: ReactNode;
+  children?: NavChild[];
+};
+
+type MenuRestrictions = Readonly<Record<string, readonly string[]>>;
+
+const BRAND_COLOR = "#b92626";
+const ACTIVE_BACKGROUND = "rgba(255,255,255,0.15)";
+const HOVER_BACKGROUND = "rgba(255,255,255,0.1)";
+const CHILD_TEXT_COLOR = "rgba(255,255,255,0.7)";
+
+function getRestrictions(source: MenuRestrictions, key: string) {
+  return source[key] ?? [];
+}
+
+const navItems: NavItem[] = [
   {
     href: "/dashboard",
     label: "รายงาน",
@@ -65,8 +86,7 @@ const navItems = [
   { href: "/dashboard/roles", label: "สิทธิ์", icon: <SecurityOutlinedIcon fontSize="small" /> },
 ];
 
-// Role restrictions
-const roleMenuRestrictions: Record<string, string[]> = {
+const roleMenuRestrictions: MenuRestrictions = {
   MARKETING_MANAGER: ["/dashboard/sales"],
   MARKETING_HEAD: ["/dashboard", "/dashboard/sales"],
   MARKETING_EMPLOYEE: ["/dashboard", "/dashboard/sales"],
@@ -75,68 +95,64 @@ const roleMenuRestrictions: Record<string, string[]> = {
   SALES_EMPLOYEE: ["/dashboard", "/dashboard/marketing"],
 };
 
-// Type restrictions
-const typeMenuRestrictions: Record<string, string[]> = {
+const typeMenuRestrictions: MenuRestrictions = {
   User: ["/dashboard/employee", "/dashboard/roles"],
   GM: ["/dashboard/roles"],
   Admin: [],
 };
 
-// --- NavLink component ---
-function NavLink({
-  item,
-  depth = 0,
-  isOpen,
-  onToggle,
-  onLinkClick,
-}: {
-  item: any;
+type NavLinkProps = {
+  item: NavItem;
   depth?: number;
   isOpen: boolean;
   onToggle: () => void;
   onLinkClick: () => void;
-}) {
-  const pathname = usePathname();
-  const isActive = pathname === item.href || pathname.startsWith(item.href + "/");
+  pathname: string;
+};
 
-  if (item.children) {
+function NavLink({ item, depth = 0, isOpen, onToggle, onLinkClick, pathname }: NavLinkProps) {
+  const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+
+  if (item.children?.length) {
     return (
-      <>
+      <Fragment>
         <ListItemButton
           onClick={onToggle}
           sx={{
             borderRadius: 2,
             pl: depth ? 4 : 2,
-            bgcolor: isActive ? "rgba(255,255,255,0.15)" : "transparent",
-            "&:hover": { bgcolor: "rgba(255,255,255,0.1)" },
+            bgcolor: isActive ? ACTIVE_BACKGROUND : "transparent",
+            "&:hover": { bgcolor: HOVER_BACKGROUND },
           }}
         >
-          <ListItemIcon sx={{ color: "inherit", minWidth: 32 }}>
-            {item.icon}
-          </ListItemIcon>
+          <ListItemIcon sx={{ color: "inherit", minWidth: 32 }}>{item.icon}</ListItemIcon>
           <ListItemText primary={item.label} />
           {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </ListItemButton>
         <Collapse in={isOpen} timeout="auto" unmountOnExit>
           <List component="div" disablePadding>
-            {item.children.map((child: any) => (
-              <Link key={child.href} href={child.href} onClick={onLinkClick}>
-                <ListItemButton
-                  sx={{
-                    pl: 6,
-                    fontSize: 14,
-                    borderRadius: 2,
-                    color: pathname === child.href ? "white" : "rgba(255,255,255,0.7)",
-                    bgcolor: pathname === child.href ? "rgba(255,255,255,0.15)" : "transparent",
-                  }}
-                >
-                  <ListItemText primary={child.label} />
-                </ListItemButton>
-              </Link>
-            ))}
+            {item.children.map((child) => {
+              const childIsActive = pathname === child.href;
+              return (
+                <Link key={child.href} href={child.href} onClick={onLinkClick}>
+                  <ListItemButton
+                    sx={{
+                      pl: 6,
+                      fontSize: 14,
+                      borderRadius: 2,
+                      color: childIsActive ? "white" : CHILD_TEXT_COLOR,
+                      bgcolor: childIsActive ? ACTIVE_BACKGROUND : "transparent",
+                      "&:hover": { bgcolor: HOVER_BACKGROUND },
+                    }}
+                  >
+                    <ListItemText primary={child.label} />
+                  </ListItemButton>
+                </Link>
+              );
+            })}
           </List>
         </Collapse>
-      </>
+      </Fragment>
     );
   }
 
@@ -147,56 +163,54 @@ function NavLink({
         sx={{
           borderRadius: 2,
           pl: depth ? 4 : 2,
-          bgcolor: isActive ? "rgba(255,255,255,0.15)" : "transparent",
-          "&:hover": { bgcolor: "rgba(255,255,255,0.1)" },
+          bgcolor: isActive ? ACTIVE_BACKGROUND : "transparent",
+          "&:hover": { bgcolor: HOVER_BACKGROUND },
         }}
       >
-        <ListItemIcon sx={{ color: "inherit", minWidth: 32 }}>
-          {item.icon}
-        </ListItemIcon>
+        <ListItemIcon sx={{ color: "inherit", minWidth: 32 }}>{item.icon}</ListItemIcon>
         <ListItemText primary={item.label} />
       </ListItemButton>
     </Link>
   );
 }
 
-// --- Main Sidebar ---
-export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose: () => void }) {
+type SidebarProps = {
+  isOpen: boolean;
+  onClose: () => void;
+};
+
+export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const { user } = useAuth();
 
-  // Filter by role/type
-  const filteredNavItems = navItems.filter((item) => {
-    const roleName = user?.role?.name;
-    const userType = user?.type as keyof typeof typeMenuRestrictions;
-    const roleRestricted = roleMenuRestrictions[roleName] || [];
-    const typeRestricted = typeMenuRestrictions[userType] || [];
-    return !roleRestricted.includes(item.href) && !typeRestricted.includes(item.href);
-  });
+  const filteredNavItems = useMemo(() => {
+    const roleName = user?.role?.name ?? "";
+    const userType = user?.type ?? "";
+    const restrictedByRole = new Set(getRestrictions(roleMenuRestrictions, roleName));
+    const restrictedByType = new Set(getRestrictions(typeMenuRestrictions, userType));
 
-  // Auto-open submenu based on path
+    return navItems.filter((item) => !restrictedByRole.has(item.href) && !restrictedByType.has(item.href));
+  }, [user?.role?.name, user?.type]);
+
   useEffect(() => {
-    const parent = navItems.find(
-      (item) =>
-        item.children &&
-        item.children.some((child: any) => pathname.startsWith(child.href))
+    const parent = navItems.find((item) =>
+      item.children?.some((child) => pathname.startsWith(child.href))
     );
-    if (parent) setOpenMenu(parent.href);
+    setOpenMenu(parent ? parent.href : null);
   }, [pathname]);
 
   const content = (
     <Box
       sx={{
         width: 260,
-        bgcolor: "#b92626",
+        bgcolor: BRAND_COLOR,
         color: "white",
         display: "flex",
         flexDirection: "column",
         height: "100%",
       }}
     >
-      {/* Logo */}
       <Stack direction="row" justifyContent="center" alignItems="center" py={3}>
         <Box sx={{ width: 96, height: 96, position: "relative" }}>
           <Image src="/images/logo.jpg" alt="Logo" fill style={{ objectFit: "contain" }} />
@@ -205,15 +219,15 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
 
       <Divider sx={{ borderColor: "rgba(255,255,255,0.2)", mb: 2 }} />
 
-      {/* Nav */}
       <List sx={{ flex: 1, overflowY: "auto" }}>
         {filteredNavItems.map((item) => (
           <NavLink
             key={item.href}
             item={item}
             isOpen={openMenu === item.href}
-            onToggle={() => setOpenMenu(openMenu === item.href ? null : item.href)}
+            onToggle={() => setOpenMenu((current) => (current === item.href ? null : item.href))}
             onLinkClick={onClose}
+            pathname={pathname}
           />
         ))}
       </List>
@@ -221,8 +235,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
   );
 
   return (
-    <>
-      {/* Mobile Drawer */}
+    <Fragment>
       <Drawer anchor="left" open={isOpen} onClose={onClose} sx={{ display: { md: "none" } }}>
         <Box sx={{ position: "absolute", top: 8, right: 8 }}>
           <IconButton onClick={onClose} sx={{ color: "white" }}>
@@ -232,8 +245,7 @@ export default function Sidebar({ isOpen, onClose }: { isOpen: boolean; onClose:
         {content}
       </Drawer>
 
-      {/* Desktop Sidebar */}
       <Box sx={{ display: { xs: "none", md: "flex" }, flexShrink: 0 }}>{content}</Box>
-    </>
+    </Fragment>
   );
 }
