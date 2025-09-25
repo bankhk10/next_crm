@@ -1,6 +1,5 @@
 "use client";
 
-import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Fragment, ReactNode, useEffect, useState } from "react";
 import Image from "next/image";
@@ -30,6 +29,8 @@ import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
+import LinkBehavior from "@/components/LinkBehavior"; // ✅ import ที่สร้างไว้
+
 type NavChild = {
   href: string;
   label: string;
@@ -43,15 +44,15 @@ type NavItem = {
 };
 
 const BRAND_COLOR = "#b92626";
-const ACTIVE_BACKGROUND = "rgba(255,255,255,0.15)";
-const HOVER_BACKGROUND = "rgba(255,255,255,0.1)";
+const ACTIVE_BACKGROUND = "#991b1b";
+const HOVER_BACKGROUND = "#991b1b";
 const CHILD_TEXT_COLOR = "rgba(255,255,255,0.7)";
 
 const navItems: NavItem[] = [
   {
     href: "/dashboard",
     label: "รายงาน",
-    icon: <AssessmentOutlinedIcon fontSize="small" />,
+    icon: <AssessmentOutlinedIcon fontSize="medium" />,
     children: [
       { href: "/dashboard/reports/overview", label: "รายงานภาพรวม" },
       { href: "/dashboard/reports/sales", label: "รายงานการขาย" },
@@ -127,7 +128,6 @@ function NavLink({
   onLinkClick,
   pathname,
 }: NavLinkProps) {
-  // ถ้ามี children ให้ active เมื่อ pathname ตรงกับ child
   const isActive = item.children
     ? item.children.some((child) => pathname.startsWith(child.href))
     : pathname === item.href;
@@ -138,8 +138,9 @@ function NavLink({
         <ListItemButton
           onClick={onToggle}
           sx={{
-            borderRadius: 2,
+            borderRadius: 4,
             pl: depth ? 4 : 2,
+            mx: 1,
             bgcolor: isActive ? ACTIVE_BACKGROUND : "transparent",
             "&:hover": { bgcolor: HOVER_BACKGROUND },
           }}
@@ -150,79 +151,87 @@ function NavLink({
           <ListItemText primary={item.label} />
           {isOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
         </ListItemButton>
-      <Collapse in={isOpen} timeout="auto" unmountOnExit>
-  <Box
-    sx={{
-      bgcolor: "rgba(255,255,255,0.05)", // พื้นหลังใส ๆ
-      borderRadius: 2,                   // มุมโค้ง
-      mx: 1,                             // margin ซ้าย/ขวา
-      my: 0.5,                           // margin บน/ล่าง
-      p: 0.5,                            // padding ข้างใน
-    }}
-  >
-    <List component="div" disablePadding>
-      {item.children.map((child) => {
-        const childIsActive = pathname === child.href;
-        return (
-          <Link key={child.href} href={child.href} onClick={onLinkClick}>
-            <ListItemButton
-              sx={{
-                pl: 4,
-                fontSize: 14,
-                borderRadius: 2,
-                color: childIsActive ? "white" : CHILD_TEXT_COLOR,
-                bgcolor: childIsActive
-                  ? ACTIVE_BACKGROUND
-                  : "transparent",
-                "&:hover": { bgcolor: HOVER_BACKGROUND },
-              }}
-            >
-              <ListItemText primary={child.label} />
-              {childIsActive && (
-                <Box
-                  component="span"
-                  sx={{
-                    width: 8,
-                    height: 8,
-                    bgcolor: "white",
-                    borderRadius: "50%",
-                    ml: 1.5,
-                  }}
-                />
-              )}
-            </ListItemButton>
-          </Link>
-        );
-      })}
-    </List>
-  </Box>
-</Collapse>
-
+        <Collapse in={isOpen} timeout="auto" unmountOnExit>
+          <Box
+            sx={{
+              bgcolor: "#991b1b",
+              borderRadius: 3,
+              mx: 1,
+              my: 0.5,
+              p: 0.5,
+            }}
+          >
+            <List component="div" disablePadding>
+              {item.children.map((child) => {
+                const childIsActive = pathname === child.href;
+                return (
+                  <ListItemButton
+                    key={child.href}
+                    component={LinkBehavior} // ✅ ใช้ LinkBehavior
+                    href={child.href}
+                    onClick={onLinkClick}
+                    sx={{
+                      pl: 4,
+                      fontSize: 14,
+                      borderRadius: 2,
+                      color: childIsActive ? "white" : CHILD_TEXT_COLOR,
+                      bgcolor: childIsActive
+                        ? `${ACTIVE_BACKGROUND} !important`
+                        : "transparent",
+                      "&:hover": { bgcolor: `${HOVER_BACKGROUND} !important` },
+                      textDecoration: "none",
+                    }}
+                  >
+                    <ListItemText primary={child.label} />
+                    {childIsActive && (
+                      <Box
+                        component="span"
+                        sx={{
+                          width: 8,
+                          height: 8,
+                          bgcolor: "white",
+                          borderRadius: "50%",
+                          ml: 1.5,
+                        }}
+                      />
+                    )}
+                  </ListItemButton>
+                );
+              })}
+            </List>
+          </Box>
+        </Collapse>
       </Fragment>
     );
   }
 
-  // เมนูไม่มี children
   return (
-    <Link href={item.href} onClick={onLinkClick}>
-      <ListItemButton
-        selected={isActive}
-        sx={{
-          borderRadius: 2,
-          pl: depth ? 4 : 2,
-          bgcolor: isActive ? ACTIVE_BACKGROUND : "transparent",
-          "&:hover": { bgcolor: HOVER_BACKGROUND },
-        }}
-      >
-        <ListItemIcon sx={{ color: "inherit", minWidth: 32 }}>
-          {item.icon}
-        </ListItemIcon>
-        <ListItemText primary={item.label} />
-      </ListItemButton>
-    </Link>
+    <ListItemButton
+      component={LinkBehavior} // ✅ ใช้ LinkBehavior
+      href={item.href}
+      onClick={onLinkClick}
+      selected={isActive}
+      sx={{
+        borderRadius: 2,
+        pl: depth ? 4 : 2,
+        mx: 1,
+        bgcolor: isActive ? `${ACTIVE_BACKGROUND} !important` : "transparent",
+        "&:hover": { bgcolor: `${HOVER_BACKGROUND} !important` },
+        "&.Mui-selected": {
+          bgcolor: `${ACTIVE_BACKGROUND} !important`,
+          "&:hover": { bgcolor: `${HOVER_BACKGROUND} !important` },
+        },
+        textDecoration: "none",
+        color: "inherit",
+      }}
+    >
+      <ListItemIcon sx={{ color: "inherit", minWidth: 36 }}>
+        {item.icon}
+      </ListItemIcon>
+      <ListItemText primary={item.label} />
+    </ListItemButton>
   );
 }
-
 
 type SidebarProps = {
   isOpen: boolean;
@@ -243,7 +252,7 @@ export default function Sidebar({ isOpen, onClose }: SidebarProps) {
   const content = (
     <Box
       sx={{
-        width: 260,
+        width: 230,
         bgcolor: BRAND_COLOR,
         color: "white",
         display: "flex",
