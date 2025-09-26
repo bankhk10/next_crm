@@ -1,6 +1,5 @@
 "use client";
 
-import { useActionState } from "react";
 import Image from "next/image";
 import { Prompt } from "next/font/google";
 import {
@@ -13,9 +12,9 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
-
-import { login, type LoginState } from "@/app/api/auth/actions";
+import { signIn } from "next-auth/react";
+import { useRouter } from "next/navigation";
+import { FormEvent, useCallback, useState } from "react";
 
 // โหลดฟอนต์ Prompt
 const prompt = Prompt({
@@ -23,18 +22,53 @@ const prompt = Prompt({
   subsets: ["thai", "latin"],
 });
 
-const initialState: LoginState = {};
-
 export default function LoginForm() {
-  const [state, formAction, isPending] = useActionState(login, initialState);
-
-  // ✅ state ใช้ควบคุม fade-in
+  const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [logoLoaded, setLogoLoaded] = useState(false);
+
+  const handleSubmit = useCallback(
+    async (event: FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+
+      const formData = new FormData(event.currentTarget);
+      const email = String(formData.get("email") ?? "").trim().toLowerCase();
+      const password = String(formData.get("password") ?? "");
+      const remember = formData.get("remember") === "on";
+
+      if (!email || !password) {
+        setError("กรุณากรอกอีเมลและรหัสผ่าน");
+        return;
+      }
+
+      setError(null);
+      setIsSubmitting(true);
+
+      const result = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+        remember: remember ? "on" : "off",
+        callbackUrl: "/dashboard",
+      });
+
+      setIsSubmitting(false);
+
+      if (result?.error) {
+        setError(result.error);
+        return;
+      }
+
+      router.push(result?.url ?? "/dashboard");
+    },
+    [router],
+  );
 
   return (
     <Box
       component="form"
-      action={formAction}
+      onSubmit={handleSubmit}
       noValidate
       sx={{ fontFamily: prompt.style.fontFamily }}
     >
@@ -112,7 +146,7 @@ export default function LoginForm() {
           </Typography>
         </Stack>
 
-        {state?.error && <Alert severity="error">{state.error}</Alert>}
+        {error && <Alert severity="error">{error}</Alert>}
 
         <TextField
           autoComplete="email"
@@ -122,7 +156,6 @@ export default function LoginForm() {
           placeholder="name@example.com"
           required
           type="email"
-          defaultValue={state?.values?.email || ""}
           InputLabelProps={{
             sx: {
               fontSize: { xs: "0.8rem", md: "0.95rem" },
@@ -189,7 +222,7 @@ export default function LoginForm() {
           type="submit"
           variant="contained"
           size="large"
-          disabled={isPending}
+          disabled={isSubmitting}
           sx={{
             textTransform: "none",
             fontWeight: 700,
@@ -208,7 +241,7 @@ export default function LoginForm() {
             fontSize: { xs: "0.9rem", md: "1rem" },
           }}
         >
-          {isPending ? "กำลังตรวจสอบ..." : "เข้าสู่ระบบ"}
+          {isSubmitting ? "กำลังตรวจสอบ..." : "เข้าสู่ระบบ"}
         </Button>
       </Stack>
     </Box>

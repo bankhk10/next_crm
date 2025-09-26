@@ -15,7 +15,7 @@ import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNone
 import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { useAuth } from "@/context/AuthContext";
+import { signOut } from "next-auth/react";
 import type { SessionUser } from "@/lib/authTypes";
 
 type HeaderProps = {
@@ -41,9 +41,12 @@ function resolveUserName(user: SessionUser | null) {
 }
 
 export default function Header({ user, onMenuClick }: HeaderProps) {
-  const { logout } = useAuth();
   const userInitial = resolveUserInitial(user);
   const displayName = resolveUserName(user);
+
+  const handleLogout = () => {
+    void signOut({ callbackUrl: "/" });
+  };
 
   return (
     <AppBar
@@ -72,7 +75,7 @@ export default function Header({ user, onMenuClick }: HeaderProps) {
             <LanguageOutlinedIcon  />
           </IconButton>
 
-          <IconButton size="small" sx={ACTION_ICON_STYLE} onClick={logout}>
+          <IconButton size="small" sx={ACTION_ICON_STYLE} onClick={handleLogout}>
             <LogoutOutlinedIcon fontSize="medium"/>
           </IconButton>
 

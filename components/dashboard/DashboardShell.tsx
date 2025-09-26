@@ -4,7 +4,6 @@ import { ReactNode, useCallback, useState } from "react";
 import { Box } from "@mui/material";
 import Sidebar from "./layout/Sidebar";
 import Header from "./layout/Header";
-import { AuthProvider } from "@/context/AuthContext";
 import type { SessionUser } from "@/lib/authTypes";
 
 type DashboardShellProps = {
@@ -19,56 +18,54 @@ export default function DashboardShell({ children, user }: DashboardShellProps) 
   const closeSidebar = useCallback(() => setIsSidebarOpen(false), []);
 
   return (
-    <AuthProvider user={user}>
+    <Box
+      sx={{
+        position: "fixed",
+        inset: 0,
+        display: "flex",
+        bgcolor: "#b92626",
+      }}
+    >
+      {/* Sidebar */}
+      <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
+
+      {/* Content */}
       <Box
         sx={{
-          position: "fixed",
-          inset: 0,
+          flex: 1,
+          minWidth: 0,
+          minHeight: 0,
           display: "flex",
-          bgcolor: "#b92626",
+          flexDirection: "column",
         }}
       >
-        {/* Sidebar */}
-        <Sidebar isOpen={isSidebarOpen} onClose={closeSidebar} />
-
-        {/* Content */}
+        {/* Header */}
         <Box
           sx={{
-            flex: 1,
-            minWidth: 0,
-            minHeight: 0,
-            display: "flex",
-            flexDirection: "column",
+            bgcolor: "#b92626",
+            color: "common.white",
+            flexShrink: 0,
           }}
         >
-          {/* Header */}
-          <Box
-            sx={{
-              bgcolor: "#b92626",
-              color: "common.white",
-              flexShrink: 0,
-            }}
-          >
-            <Header user={user} onMenuClick={openSidebar} />
-          </Box>
+          <Header user={user} onMenuClick={openSidebar} />
+        </Box>
 
-          {/* Main */}
-          <Box
-            component="main"
-            sx={{
-              flex: 1,
-              minHeight: 0,
-              overflowX: "hidden",
-              overflowY: "auto",
-              bgcolor: "grey.100",
-              borderTopLeftRadius: 24,
-              p: { xs: 2, md: 4 },
-            }}
-          >
-            {children}
-          </Box>
+        {/* Main */}
+        <Box
+          component="main"
+          sx={{
+            flex: 1,
+            minHeight: 0,
+            overflowX: "hidden",
+            overflowY: "auto",
+            bgcolor: "grey.100",
+            borderTopLeftRadius: 24,
+            p: { xs: 2, md: 4 },
+          }}
+        >
+          {children}
         </Box>
       </Box>
-    </AuthProvider>
+    </Box>
   );
 }
