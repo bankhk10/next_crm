@@ -9,24 +9,27 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
-  Link,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
+import { useState } from "react";
 
 import { login, type LoginState } from "@/app/api/auth/actions";
 
 // โหลดฟอนต์ Prompt
 const prompt = Prompt({
-  weight: ["400", "500", "700"], // เลือกน้ำหนักฟอนต์
-  subsets: ["thai", "latin"], // ให้รองรับภาษาไทย
+  weight: ["400", "500", "700"],
+  subsets: ["thai", "latin"],
 });
 
 const initialState: LoginState = {};
 
 export default function LoginForm() {
   const [state, formAction, isPending] = useActionState(login, initialState);
+
+  // ✅ state ใช้ควบคุม fade-in
+  const [logoLoaded, setLogoLoaded] = useState(false);
 
   return (
     <Box
@@ -37,6 +40,7 @@ export default function LoginForm() {
     >
       <Stack spacing={2}>
         <Stack spacing={2} alignItems="center" textAlign="center">
+          {/* Logo Box */}
           <Box
             sx={{
               width: { xs: 140, md: 180 },
@@ -45,14 +49,21 @@ export default function LoginForm() {
               borderRadius: "8%",
               overflow: "hidden",
               boxShadow: "0 8px 20px rgba(0,0,0,0.25)",
+              backgroundColor: "#f5f5f5", // fallback กัน flash
             }}
           >
             <Image
               src="/images/logo.png"
               alt="CS ONE"
               fill
+              priority
               sizes="(max-width: 800px) 140px, 180px"
-              style={{ objectFit: "contain" }}
+              style={{
+                objectFit: "contain",
+                opacity: logoLoaded ? 1 : 0,
+                transition: "opacity 0.2s ease-in-out", // ✅ fade-in smooth
+              }}
+              onLoadingComplete={() => setLogoLoaded(true)} // ✅ trigger fade-in
             />
           </Box>
 
@@ -64,7 +75,7 @@ export default function LoginForm() {
               sx={{
                 textTransform: "uppercase",
                 letterSpacing: 2.4,
-                fontFamily: prompt.style.fontFamily, // 👈 บังคับใช้ Prompt
+                fontFamily: prompt.style.fontFamily,
               }}
             >
               ระบบ{" "}
@@ -111,7 +122,7 @@ export default function LoginForm() {
           placeholder="name@example.com"
           required
           type="email"
-          defaultValue={state?.values?.email || ""} // ✅ เก็บค่าอีเมลไว้
+          defaultValue={state?.values?.email || ""}
           InputLabelProps={{
             sx: {
               fontSize: { xs: "0.8rem", md: "0.95rem" },
@@ -143,7 +154,7 @@ export default function LoginForm() {
           type="password"
           InputLabelProps={{
             sx: {
-              fontSize: { xs: "0.8rem", md: "0.95rem" }, // ⬅ label
+              fontSize: { xs: "0.8rem", md: "0.95rem" },
               fontFamily: prompt.style.fontFamily,
             },
           }}
@@ -154,7 +165,7 @@ export default function LoginForm() {
               "& input": {
                 paddingLeft: "14px",
                 paddingY: { xs: "6px", md: "10px" },
-                fontSize: { xs: "0.85rem", md: "1rem" }, // ⬅ text ในช่อง
+                fontSize: { xs: "0.85rem", md: "1rem" },
                 fontFamily: prompt.style.fontFamily,
               },
             },
@@ -169,13 +180,7 @@ export default function LoginForm() {
           justifyContent="space-between"
         >
           <FormControlLabel
-            control={
-              <Checkbox
-                name="remember"
-                color="primary"
-                sx={{ borderRadius: 1 }}
-              />
-            }
+            control={<Checkbox name="remember" color="primary" sx={{ borderRadius: 1 }} />}
             label="บันทึกรหัส"
           />
         </Stack>
@@ -189,9 +194,9 @@ export default function LoginForm() {
             textTransform: "none",
             fontWeight: 700,
             borderRadius: 999,
-            py: { xs: 1, md: 1.2 }, // ⬅ padding แนวตั้งลดลงบนจอเล็ก
-            px: { xs: 3, md: 4 }, // ⬅ padding แนวนอนลดลงบนจอเล็ก
-            width: { xs: "100%", sm: "70%", md: "40%" }, // ⬅ บนมือถือเต็มจอ
+            py: { xs: 1, md: 1.2 },
+            px: { xs: 3, md: 4 },
+            width: { xs: "100%", sm: "70%", md: "40%" },
             alignSelf: "center",
             backgroundColor: "#757575",
             boxShadow: "0 8px 16px rgba(0,0,0,0.15)",
@@ -200,7 +205,7 @@ export default function LoginForm() {
               boxShadow: "0 10px 18px rgba(0,0,0,0.2)",
             },
             fontFamily: prompt.style.fontFamily,
-            fontSize: { xs: "0.9rem", md: "1rem" }, // ⬅ ขนาดฟอนต์เล็กลงบนมือถือ
+            fontSize: { xs: "0.9rem", md: "1rem" },
           }}
         >
           {isPending ? "กำลังตรวจสอบ..." : "เข้าสู่ระบบ"}
